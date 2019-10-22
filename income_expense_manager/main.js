@@ -10,6 +10,9 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.use(express.static('static'));
 
 app.set('view engine', 'handlebars');
 app.set('port', 58878);
