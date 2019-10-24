@@ -1,43 +1,44 @@
 <div class="content">
     <h3 class="title is-3">Transactions</h3>
 </div>
-<table id="transactions-table">
+
+<table class="table table-striped" id="transactions-table">
     <thead>
         <tr>
-        <th>#</th>
-        <th>Amount</th>
-        <th>Date Spent/Received</th>
-        <th>Income/Expense</th>
-    </tr>
+        <th scope="col">#</th>
+        <th scope="col">Amount</th>
+        <th scope="col">Date</th>
+        <th scope="col">Type</th>
+        </tr>
     </thead>
     <tbody id="transactions-tbody">
         <tr>
-        <td>1</td>
+        <th scope="row">1</th>
         <td>+100.00</td>
         <td>10/16/2019</td>
         <td>Income</td>
-    </tr>
-    <tr>
-        <td>2</td>
+        </tr>
+        <tr>
+        <th scope="row">2</th>
         <td>-24.36</td>
         <td>10/20/2019</td>
         <td>Expense</td>
-    </tr>
-    <tr>
-        <td>3</td>
+        </tr>
+        <tr>
+        <th scope="row">3</th>
         <td>+15.00</td>
         <td>10/21/2019</td>
         <td>Income</td>
-    </tr>
+        </tr>
     </tbody>
-    
 </table>
+
 <form action="" method="post" id="trans-form">
     <br><br>
-    Enter in data: <br><br>
+    New Transaction: <br><br>
     Amount:
-        <input id="amount-input" type="number" name="numerical_input" value=""><br><br>
-    Date Spent/Received:
+        <input id="amount-input" type="number" name="numerical_input" value="">
+    Date:
         <input id="date-input" type="date" name="date_input" value=""><br><br>
         <input id="income-radio" type="radio" name="type" value="income" checked> Income <br>
         <input type="radio" name="type" value="expense"> Expense <br><br>
