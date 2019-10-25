@@ -7,9 +7,17 @@ const algorithm = 'aes-256-cbc';
 // const iv = crypto.randomBytes(16);
 const key = "keyencrypter";
 
-function decrypt(buffer) {
-    var decipher = crypto.createDecipher(algorithm,key);
-    var dec = Buffer.concat([decipher.update(buffer) , decipher.final()]);
+function encrypt(text){
+    var cipher = crypto.createCipher(algorithm,password)
+    var crypted = cipher.update(text,'utf8','hex')
+    crypted += cipher.final('hex');
+    return crypted;
+}
+
+function decrypt(text){
+    var decipher = crypto.createDecipher(algorithm,key)
+    var dec = decipher.update(text,'hex','utf8')
+    dec += decipher.final('utf8');
     return dec;
 }
 
@@ -29,7 +37,7 @@ var passport = require('passport'),
 
 app.use(passport.initialize());
 app.use(passport.session());
-
+ 
 
 /***********************************************
  * Local Login / Authentication
@@ -45,14 +53,11 @@ passport.use(new LocalStrategy(
                 return done(null, false, { message: 'No user found.'});
             }
 
-            // console.log(result[0].password)
-            // decrypt(result[0].password)
-
             if (result[0].password != password) {
                 return done(null, false, { message: 'Incorrect password.'});
             }
 
-            return done(null, user);
+            return done(null, result[0]);
         })
     }
 ));
@@ -106,15 +111,15 @@ app.get('/transactions', function(req, res, next) {
     res.render('transactions', context);
 });
 
-// app.use(function(req, res){
-//   res.status(404);
-//   res.render('404');
-// });
+app.use(function(req, res){
+  res.status(404);
+  res.render('404');
+});
 
-// app.use(function(err, req, res, next) {
-//   res.status(400);
-//   res.render('500');
-// });
+app.use(function(err, req, res, next) {
+  res.status(400);
+  res.render('500');
+});
 
 app.get('/login', function(req, res, next) {
     res.render('login/login');
