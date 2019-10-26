@@ -8,9 +8,13 @@ window.addEventListener("load", function(e) {
         var amount_input = document.getElementById("amount-input"),
             date_input = document.getElementById("date-input"),
             income_radio = document.getElementById("income-radio");
+            //edit_button = document.getElementById("edit_button"),
+            //delete_button = document.getElementById("delete_button");
+
             
         var tr = document.createElement("tr");
         var td = document.createElement("td");
+        var btn = document.createElement("button");
         
         // Add # Rows
         var num_rows = tbody.childElementCount;
@@ -36,8 +40,18 @@ window.addEventListener("load", function(e) {
         }
         tr.appendChild(td);
 
-        tbody.append(tr);
+        // Option buttons
+        btn = document.createElement("button");
+        btn.innerText = "📝"; 
+        btn.setAttribute("type", "button");                  
+        tr.appendChild(button);     
 
+        btn = document.createElement("button");
+        btn.innerText = "❌";         
+        btn.setAttribute("type", "button");                  
+        tr.appendChild(button);    
+        
+        tbody.append(tr);
 
         document.getElementById("trans-form").reset();
     });
