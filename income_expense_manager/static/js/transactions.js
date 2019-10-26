@@ -41,15 +41,20 @@ window.addEventListener("load", function(e) {
         tr.appendChild(td);
 
         // Option buttons
+        td = document.createElement("td");
+
         btn = document.createElement("button");
         btn.innerText = "📝"; 
-        btn.setAttribute("type", "button");                  
-        tr.appendChild(button);     
+        btn.setAttribute("type", "button");   
+
+        td.append(btn);     
 
         btn = document.createElement("button");
         btn.innerText = "❌";         
-        btn.setAttribute("type", "button");                  
-        tr.appendChild(button);    
+        btn.setAttribute("type", "button");   
+    
+        td.append(btn);             
+        tr.appendChild(td);    
         
         tbody.append(tr);
 
