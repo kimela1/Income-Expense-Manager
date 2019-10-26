@@ -6,6 +6,7 @@
     <thead>
         <tr>
         <th scope="col">#</th>
+        <th scope="col">Name</th>
         <th scope="col">Amount</th>
         <th scope="col">Date</th>
         <th scope="col">Type</th>
@@ -13,7 +14,7 @@
         </tr>
     </thead>
     <tbody id="transactions-tbody">
-        <tr>
+        {{!-- <tr>
             <th scope="row">1</th>
             <td>+100.00</td>
             <td>2019-10-16</td>
@@ -42,17 +43,19 @@
                 <button id="edit-button">📝</button>
                 <button id="delete-button">❌</button>
             </td>
-        </tr>
+        </tr> --}}
     </tbody>
 </table>
 
 <form action="" method="post" id="trans-form">
     <br><br>
     New Transaction: <br><br>
+    Name:
+        <input id="name-input" type="text" name="input"> <br><br>
     Amount:
-        <input id="amount-input" type="number" name="numerical_input" value="">
+        <input id="amount-input" type="number" name="amount" value="">
     Date:
-        <input id="date-input" type="date" name="date_input" value=""><br><br>
+        <input id="date-input" type="date" name="date" value=""><br><br>
         <input id="income-radio" type="radio" name="type" value="income" checked> Income <br>
         <input type="radio" name="type" value="expense"> Expense <br><br>
     <input type="submit" value="Submit" id="trans-submit"><br><br>
