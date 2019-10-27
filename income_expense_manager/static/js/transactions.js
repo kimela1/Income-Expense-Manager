@@ -55,20 +55,24 @@ var transaction_table = {
         // Name
         td = document.createElement("td");
         td.innerText = name;
+        td.setAttribute("id", "name-" + id);
         tr.appendChild(td);
 
         // Add Amount
         td = document.createElement("td");
         td.innerText = amount;
+        td.setAttribute("id", "amount-" + id);
         tr.appendChild(td);
         
         // Date
         td = document.createElement("td");
         td.innerText = date_string;
+        td.setAttribute("id", "date-" + id);
         tr.appendChild(td);
 
         // Income / Expense
         td = document.createElement("td");
+        td.setAttribute("id", "type-" + id);
         if (income_status) {
             td.innerText = "Income";
         } else {
@@ -79,12 +83,74 @@ var transaction_table = {
         // Option buttons
         td = document.createElement("td");
 
+        // EDIT BUTTON
         btn = document.createElement("button");
         btn.innerText = "📝"; 
-        btn.setAttribute("type", "button");   
+        btn.setAttribute("type", "button");
 
-        td.append(btn);     
+        btn.setAttribute("id", "edit-" + id);
 
+        // Edit transactions
+        btn.addEventListener("click", function(e){
+            // Get ID of Button Element
+            var element_id = e.target.id;
+
+            // Match this with the Regular Expression to get # at the end (true id)
+            var id_regexp = /-(\d+)/;
+            var result = id_regexp.exec(element_id);
+            //Get ID from results
+            var id = result[1];
+
+            var amount_td = document.getElementById("amount-" + id),
+                name_td = document.getElementById("name-" + id),
+                date_td = document.getElementById("date-" + id),
+                type_td = document.getElementById("type-" + id); 
+
+            var amount = parseInt(amount_td.innerText),
+                name = name_td.innerText,
+                date = date_td.innerText,
+                type = type_td.innerText;
+            
+            amount_td.innerText = "";
+            name_td.innerText = "";
+            date_td.innerText = "";
+            type_td.innerText = "";
+
+            var input = document.createElement("input");
+            input.setAttribute("type", "number");
+            input.value = amount;
+            amount_td.append(input);
+
+            input = document.createElement("input");
+            input.setAttribute("type", "text");
+            input.value = name;
+            name_td.append(input);
+
+            input = document.createElement("input");
+            input.setAttribute("type", "date");
+            input.value = date;
+            date_td.append(input);
+
+            input = document.createElement("select");
+            var option = document.createElement("option");
+            option.innerText = "Income";
+            input.append(option);
+            if (type == "Income")
+                option.setAttribute("selected", "True")
+            option = document.createElement("option");
+            option.innerText = "Expense";
+            if (type == "Expense")
+                option.setAttribute("selected", "True");
+            input.append(option);
+            type_td.append(input);
+
+
+
+        });
+
+        td.append(btn);
+
+        // DELETE BUTTON
         btn = document.createElement("button");
         btn.innerText = "❌";         
         btn.setAttribute("type", "button");   
