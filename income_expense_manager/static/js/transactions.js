@@ -32,7 +32,7 @@ window.addEventListener("load", function(e) {
         else
             income_status = false;
 
-        transaction_table.add_transaction(id, amount, date_string, income_status);
+        transaction_table.add_transaction(id, name, amount, date_string, income_status);
         
         document.getElementById("trans-form").reset();
     });
