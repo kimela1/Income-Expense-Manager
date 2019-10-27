@@ -121,30 +121,30 @@ app.use(function(err, req, res, next) {
   res.render('500');
 });
 
-app.get('/login', function(req, res, next) {
-    res.render('login/login');
-});
+// app.get('/login', function(req, res, next) {
+//     res.render('login/login');
+// });
 
-app.get('/test', function(req, res, next) {
-    mysql.pool.query("show tables", function(err, result){
-        if(err){
-          next(err);
-          return;
-        }
+// app.get('/test', function(req, res, next) {
+//     mysql.pool.query("show tables", function(err, result){
+//         if(err){
+//           next(err);
+//           return;
+//         }
 
 
-        res.send(result);
-      });
+//         res.send(result);
+//       });
     
-})
+// })
 
-app.post('/login',
-    passport.authenticate('local', {
-        successRedirect: '/',
-        failureRedirect: '/login',
-        // failureFlash: true
-    })
-);
+// app.post('/login',
+//     passport.authenticate('local', {
+//         successRedirect: '/',
+//         failureRedirect: '/login',
+//         // failureFlash: true
+//     })
+// );
 
 app.listen(app.get('port'), function() {
     console.log('Express started on http://localhost: ' + app.get('port'));
