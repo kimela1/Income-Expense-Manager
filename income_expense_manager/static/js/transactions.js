@@ -1,8 +1,8 @@
 window.addEventListener("load", function(e) {
     // Add Data to Transactions Table
-    transaction_table.add_transaction(1, "Job", "+500", "2019-10-16", true);
-    transaction_table.add_transaction(2, "Groceries", "-15", "2019-10-21", false);
-    transaction_table.add_transaction(3, "Gas", "-24.36", "2019-10-20", false);
+    transaction_table.add_transaction(1, "Job", "+500", "2019-10-16", true, "Job");
+    transaction_table.add_transaction(2, "Ralphs", "-15", "2019-10-21", false, "Grocery");
+    transaction_table.add_transaction(3, "76 Shell", "-24.36", "2019-10-20", false, "Gas Weekly");
 
     var submit_button = document.getElementById("trans-submit");
 
@@ -39,7 +39,7 @@ window.addEventListener("load", function(e) {
 });
 
 var transaction_table = {
-    add_transaction(id, name, amount, date_string, income_status) {
+    add_transaction(id, name, amount, date_string, income_status, categories_str) {
         var tbody = document.getElementById("transactions-tbody");
         var tr = document.createElement("tr");
 
@@ -80,6 +80,12 @@ var transaction_table = {
         }
         tr.appendChild(td);
 
+        // Categories td
+        td = document.createElement("td");
+        td.setAttribute("id", "categories-" + id);
+        td.textContent = categories_str;
+        tr.appendChild(td);
+
         // Option buttons
         td = document.createElement("td");
 
@@ -104,7 +110,7 @@ var transaction_table = {
             var amount_td = document.getElementById("amount-" + id),
                 name_td = document.getElementById("name-" + id),
                 date_td = document.getElementById("date-" + id),
-                type_td = document.getElementById("type-" + id); 
+                type_td = document.getElementById("type-" + id);
 
             var amount = parseInt(amount_td.innerText),
                 name = name_td.innerText,

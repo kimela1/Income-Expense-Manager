@@ -101,6 +101,11 @@ app.get('/reports', function(req, res, next) {
     res.render('reports', context);
 });
 
+app.get('/categories', function(req, res, next) {
+    var context = {title: "Categories"};
+    res.render('categories', context);
+});
+
 app.get('/signUp', function(req, res, next) {
     var context = {title: "sign up"};
     res.render('signUp', context);

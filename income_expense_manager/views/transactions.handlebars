@@ -2,15 +2,20 @@
     <h3 class="title is-3">Transactions</h3>
 </div>
 
+<div class="input-group mb-4">
+<input class="form-control" type="text" placeholder="Search" aria-label="Search">
+</div>
+
 <table class="table table-striped" id="transactions-table">
     <thead>
         <tr>
-        <th scope="col">#</th>
-        <th scope="col">Name</th>
-        <th scope="col">Amount</th>
-        <th scope="col">Date</th>
-        <th scope="col">Type</th>
-        <th scope="col">Options</th>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Date</th>
+            <th scope="col">Type</th>
+            <th scope="col">Categories</th>
+            <th scope="col">Options</th>
         </tr>
     </thead>
     <tbody id="transactions-tbody">
@@ -47,6 +52,15 @@
     </tbody>
 </table>
 
+<form>
+    <div class="input-group mb-3">
+
+    </div>
+</form>
+
+
+
+
 <form action="" method="post" id="trans-form">
     <br><br>
     New Transaction: <br><br>
@@ -59,6 +73,8 @@
         <input id="income-radio" type="radio" name="type" value="income" checked> Income <br>
         <input type="radio" name="type" value="expense"> Expense <br><br>
     <input type="submit" value="Submit" id="trans-submit"><br><br>
+    Categories:
+        <input id
 </form>
 
 <script src="js/transactions.js"></script>
