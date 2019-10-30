@@ -83,7 +83,7 @@ app.use(bodyParser.json());
 app.use(express.static('static'));
 
 app.set('view engine', 'handlebars');
-app.set('port', 58878);
+app.set('port', 56786);
 
 // Main Page: Running index
 app.get('/', function(req, res, next) {
