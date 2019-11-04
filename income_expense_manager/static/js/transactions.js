@@ -107,26 +107,30 @@ var transaction_table = {
             //Get ID from results
             var id = result[1];
 
-            var amount_td = document.getElementById("amount-" + id),
-                name_td = document.getElementById("name-" + id),
-                date_td = document.getElementById("date-" + id),
-                type_td = document.getElementById("type-" + id);
+            var amount_td       = document.getElementById("amount-" + id),
+                name_td         = document.getElementById("name-" + id),
+                date_td         = document.getElementById("date-" + id),
+                type_td         = document.getElementById("type-" + id),
+                categories_td   = document.getElementById("categories-" + id);
 
             var amount = parseInt(amount_td.innerText),
                 name = name_td.innerText,
                 date = date_td.innerText,
-                type = type_td.innerText;
+                type = type_td.innerText,
+                categories = categories_td.innerText;
             
             amount_td.innerText = "";
             name_td.innerText = "";
             date_td.innerText = "";
             type_td.innerText = "";
+            categories_td.innerText = "";
 
             var input = document.createElement("input");
             input.setAttribute("type", "number");
             input.value = amount;
             amount_td.append(input);
 
+            
             input = document.createElement("input");
             input.setAttribute("type", "text");
             input.value = name;
@@ -150,8 +154,11 @@ var transaction_table = {
             input.append(option);
             type_td.append(input);
 
-
-
+            var btn = document.createElement("button");
+            btn.setAttribute("type", "button");
+            btn.classList.add("btn");
+            btn.innerText = categories + "❌";
+            categories_td.append(btn);
         });
 
         td.append(btn);
