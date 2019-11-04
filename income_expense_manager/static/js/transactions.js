@@ -2,7 +2,7 @@ window.addEventListener("load", function(e) {
     // Add Data to Transactions Table
     transaction_table.add_transaction(1, "Job", "+500", "2019-10-16", true, "Job");
     transaction_table.add_transaction(2, "Ralphs", "-15", "2019-10-21", false, "Grocery");
-    transaction_table.add_transaction(3, "76 Shell", "-24.36", "2019-10-20", false, "Gas Weekly");
+    transaction_table.add_transaction(3, "76 Shell", "-24.36", "2019-10-20", false, "Gas");
 
     var submit_button = document.getElementById("trans-submit");
 
