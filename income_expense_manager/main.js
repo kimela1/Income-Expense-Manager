@@ -116,6 +116,11 @@ app.get('/transactions', function(req, res, next) {
     res.render('transactions', context);
 });
 
+app.get('/login', function(req, res, next) {
+    var context = {title: "login"}
+    res.render('login', context);
+});
+
 app.use(function(req, res){
   res.status(404);
   res.render('404');
@@ -125,10 +130,6 @@ app.use(function(err, req, res, next) {
   res.status(400);
   res.render('500');
 });
-
-// app.get('/login', function(req, res, next) {
-//     res.render('login/login');
-// });
 
 // app.get('/test', function(req, res, next) {
 //     mysql.pool.query("show tables", function(err, result){
