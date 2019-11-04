@@ -36,6 +36,14 @@ window.addEventListener("load", function(e) {
         
         document.getElementById("trans-form").reset();
     });
+
+    var show_transactions_btn = document.getElementById("add-trans-btn");
+    show_transactions_btn.addEventListener("click", function(e){
+        var add_form = document.getElementById("trans-form");
+        add_form.removeAttribute("hidden");
+
+        show_transactions_btn.style.display = "none";
+    });
 });
 
 var transaction_table = {
@@ -154,10 +162,18 @@ var transaction_table = {
             input.append(option);
             type_td.append(input);
 
+            // Catagories Section
             var btn = document.createElement("button");
             btn.setAttribute("type", "button");
             btn.classList.add("btn");
             btn.innerText = categories + "❌";
+            categories_td.append(btn);
+
+            // Categories Plus Btn
+            btn = document.createElement("button");
+            btn.setAttribute("type", "button");
+            btn.classList.add("btn");
+            btn.innerText = "➕";
             categories_td.append(btn);
         });
 
