@@ -1,5 +1,6 @@
 var express = require('express');
 var exphbs = require('express-handlebars');
+var session = require('express-session');
 
 const crypto = require('crypto');
 const algorithm = 'aes-256-cbc';
@@ -31,20 +32,21 @@ exphbs.create({defaultLayout:'main'});
 
 var app = express();
 
+var bodyParser = require('body-parser');
+
+
 var passport = require('passport'),
     // Strategy (?) to authenticate requires
     LocalStrategy = require('passport-local').Strategy;
-
-app.use(passport.initialize());
-app.use(passport.session());
- 
 
 /***********************************************
  * Local Login / Authentication
  ************************************************/
 passport.use(new LocalStrategy(
     function(username, password, done) {
-        mysql.pool.query("SELECT * FROM `user` WHERE `login` = '" + username + "'", function(err, result){
+        console.log(username, password);
+        mysql.pool.query("SELECT * FROM `user` WHERE `username` = '" + username + "'", function(err, result){
+            console.log(result[0])
             if (err) {return done(err); }
             if (!result) {
                 return done(null, false, { message: 'Incorrect username.'});
@@ -56,31 +58,31 @@ passport.use(new LocalStrategy(
             if (result[0].password != password) {
                 return done(null, false, { message: 'Incorrect password.'});
             }
-
             return done(null, result[0]);
-        })
+        });
     }
 ));
 
 passport.serializeUser(function(user, done) {
-    done(null, user.id);
+    console.log(user, user.user_id);
+    done(null, user.user_id);
 });
 
 passport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
-        done(err, user);
+    mysql.pool.query("SELECT * FROM `user` WHERE `user_id` = '" + id + "'", function(err, result){
+        return done(null, result[0]);
     });
 });
 
-app.engine('handlebars', exphbs());
-
-var session = require('express-session');
-var bodyParser = require('body-parser');
+app.use(express.static('static'));
+app.use(session({secret: 'secret password'}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use(express.static('static'));
+app.engine('handlebars', exphbs());
 
 app.set('view engine', 'handlebars');
 app.set('port', 56786);
@@ -88,6 +90,7 @@ app.set('port', 56786);
 // Main Page: Running index
 app.get('/', function(req, res, next) {
     var context = {title: "Income and Expense Manager"};
+    console.log(req.user);
     res.render('dashboard', context);
 });
 
@@ -117,19 +120,14 @@ app.get('/transactions', function(req, res, next) {
 });
 
 app.get('/login', function(req, res, next) {
+    console.log(req.user)
     var context = {title: "login"}
     res.render('login', context);
 });
 
-app.use(function(req, res){
-  res.status(404);
-  res.render('404');
-});
 
-app.use(function(err, req, res, next) {
-  res.status(400);
-  res.render('500');
-});
+app.get('/success', (req, res) => res.send("Welcome "+req.query.username+"!!"));
+app.get('/error', (req, res) => res.send("error logging in"));
 
 // app.get('/test', function(req, res, next) {
 //     mysql.pool.query("show tables", function(err, result){
@@ -142,15 +140,30 @@ app.use(function(err, req, res, next) {
 //         res.send(result);
 //       });
     
-// })
+// });
 
+app.post('/login',
+    passport.authenticate('local', {
+        successRedirect: '/',
+        failureRedirect: '/login',
+        failureFlash: true
+    })
+);
 // app.post('/login',
-//     passport.authenticate('local', {
-//         successRedirect: '/',
-//         failureRedirect: '/login',
-//         // failureFlash: true
-//     })
-// );
+//     passport.authenticate('local', { failureRedirect: '/error' }),
+//     function(req, res) {
+//         res.redirect('/success?username='+req.user.username);
+// });
+
+app.use(function(req, res){
+    res.status(404);
+    res.render('404');
+});
+  
+// app.use(function(err, req, res, next) {
+//     res.status(500);
+//     res.render('500');
+// });
 
 app.listen(app.get('port'), function() {
     console.log('Express started on http://localhost: ' + app.get('port'));
