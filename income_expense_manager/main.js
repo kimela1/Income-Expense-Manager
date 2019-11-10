@@ -45,7 +45,7 @@ var passport = require('passport'),
 passport.use(new LocalStrategy(
     function(username, password, done) {
         console.log(username, password);
-        mysql.pool.query("SELECT * FROM `user` WHERE `username` = '" + username + "'", function(err, result){
+        mysql.pool.query("SELECT * FROM `inex_user` WHERE `username` = '" + username + "'", function(err, result){
             console.log(result[0])
             if (err) {return done(err); }
             if (!result) {
@@ -69,7 +69,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-    mysql.pool.query("SELECT * FROM `user` WHERE `user_id` = '" + id + "'", function(err, result){
+    mysql.pool.query("SELECT * FROM `inex_user` WHERE `user_id` = '" + id + "'", function(err, result){
         return done(null, result[0]);
     });
 });
@@ -146,7 +146,7 @@ app.post('/login',
     passport.authenticate('local', {
         successRedirect: '/',
         failureRedirect: '/login',
-        failureFlash: true
+        // failureFlash: true
     })
 );
 // app.post('/login',
@@ -160,10 +160,10 @@ app.use(function(req, res){
     res.render('404');
 });
   
-// app.use(function(err, req, res, next) {
-//     res.status(500);
-//     res.render('500');
-// });
+app.use(function(err, req, res, next) {
+    res.status(500);
+    res.render('500');
+});
 
 app.listen(app.get('port'), function() {
     console.log('Express started on http://localhost: ' + app.get('port'));
