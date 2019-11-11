@@ -14,9 +14,8 @@ pool.getConnection(function(err) {
 
     console.log('DB Connection Successful');
 });
-
   
-  module.exports.pool = pool;
+module.exports.pool = pool;
 
 // var connection = mysql.createConnection({
 //     host: 'localhost',

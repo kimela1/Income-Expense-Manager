@@ -2,26 +2,6 @@ var express = require('express');
 var exphbs = require('express-handlebars');
 var session = require('express-session');
 
-const crypto = require('crypto');
-const algorithm = 'aes-256-cbc';
-// const key = crypto.randomBytes(32);
-// const iv = crypto.randomBytes(16);
-const key = "keyencrypter";
-
-function encrypt(text){
-    var cipher = crypto.createCipher(algorithm,password)
-    var crypted = cipher.update(text,'utf8','hex')
-    crypted += cipher.final('hex');
-    return crypted;
-}
-
-function decrypt(text){
-    var decipher = crypto.createDecipher(algorithm,key)
-    var dec = decipher.update(text,'hex','utf8')
-    dec += decipher.final('utf8');
-    return dec;
-}
-
 // Authenticate to MySQL Server
 // var mysql = require('./db.js');
 
@@ -34,10 +14,9 @@ var app = express();
 
 var bodyParser = require('body-parser');
 
-
-var passport = require('passport'),
+var passport = require('passport');
     // Strategy (?) to authenticate requires
-    LocalStrategy = require('passport-local').Strategy;
+var LocalStrategy = require('passport-local').Strategy;
 
 /***********************************************
  * Local Login / Authentication
@@ -74,6 +53,8 @@ passport.deserializeUser(function(id, done) {
     });
 });
 
+module.exports.passport = passport;
+
 app.use(express.static('static'));
 app.use(session({secret: 'secret password'}));
 app.use(passport.initialize());
@@ -87,10 +68,16 @@ app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 app.set('port', 56786);
 
+function get_user(req) {
+    return req.user;
+}
+
 // Main Page: Running index
 app.get('/', function(req, res, next) {
     var context = {title: "Income and Expense Manager"};
-    console.log(req.user);
+    var user = get_user(req);
+    console.log(user);
+    
     res.render('dashboard', context);
 });
 
@@ -129,19 +116,6 @@ app.get('/login', function(req, res, next) {
 app.get('/success', (req, res) => res.send("Welcome "+req.query.username+"!!"));
 app.get('/error', (req, res) => res.send("error logging in"));
 
-// app.get('/test', function(req, res, next) {
-//     mysql.pool.query("show tables", function(err, result){
-//         if(err){
-//           next(err);
-//           return;
-//         }
-
-
-//         res.send(result);
-//       });
-    
-// });
-
 app.post('/login',
     passport.authenticate('local', {
         successRedirect: '/',
@@ -149,11 +123,6 @@ app.post('/login',
         // failureFlash: true
     })
 );
-// app.post('/login',
-//     passport.authenticate('local', { failureRedirect: '/error' }),
-//     function(req, res) {
-//         res.redirect('/success?username='+req.user.username);
-// });
 
 app.use(function(req, res){
     res.status(404);
