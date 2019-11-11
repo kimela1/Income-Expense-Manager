@@ -18,8 +18,8 @@ CREATE TABLE `inex_user` (
 ) ENGINE=innodb;
 
 CREATE TABLE `inex_expense` (
-    `name` varchar(255) NOT NULL,
     `expense_id` int(11) NOT NULL AUTO_INCREMENT,
+    `name` varchar(255) NOT NULL,
     `amount` DECIMAL(10,2) NOT NULL,
     `date_spent` date NOT NULL,
     `user_id` int(11),
@@ -29,8 +29,8 @@ CREATE TABLE `inex_expense` (
 ) ENGINE=innodb;
 
 CREATE TABLE `inex_income` (
-    `name` varchar(255) NOT NULL,
     `income_id` int(11) NOT NULL AUTO_INCREMENT,
+    `name` varchar(255) NOT NULL,
     `amount` DECIMAL(10,2) NOT NULL,
     `date_received` date NOT NULL,
     `user_id` int(11),
@@ -109,3 +109,16 @@ WHERE `name` = 'Job';
 
 INSERT INTO `inex_income_category` (`income_id`, `category_id`)
 VALUES (@income_id1, @category_id3);
+
+-- Combine inex_income and inex_expense into one transactions table
+SELECT  * 
+FROM 
+        (
+            SELECT 'inex_income' as table_name, name, income_id as id, amount, date_received as date, user_id 
+            FROM inex_income
+                where date_received between '2019/11/01' and '2019/11/10'
+            UNION ALL
+            SELECT 'inex_expense' as table_name, name, expense_id as id, amount, date_spent as date, user_id
+            FROM inex_expense
+                where date_spent between '2019/11/01' and '2019/11/10'
+        ) transactions;
