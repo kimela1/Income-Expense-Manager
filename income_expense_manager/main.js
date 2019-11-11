@@ -23,9 +23,7 @@ var LocalStrategy = require('passport-local').Strategy;
  ************************************************/
 passport.use(new LocalStrategy(
     function(username, password, done) {
-        console.log(username, password);
         mysql.pool.query("SELECT * FROM `inex_user` WHERE `username` = '" + username + "'", function(err, result){
-            console.log(result[0])
             if (err) {return done(err); }
             if (!result) {
                 return done(null, false, { message: 'Incorrect username.'});
@@ -43,7 +41,6 @@ passport.use(new LocalStrategy(
 ));
 
 passport.serializeUser(function(user, done) {
-    console.log(user, user.user_id);
     done(null, user.user_id);
 });
 
@@ -76,7 +73,6 @@ function get_user(req) {
 app.get('/', function(req, res, next) {
     var context = {title: "Income and Expense Manager"};
     var user = get_user(req);
-    console.log(user);
     
     res.render('dashboard', context);
 });
@@ -107,7 +103,6 @@ app.get('/transactions', function(req, res, next) {
 });
 
 app.get('/login', function(req, res, next) {
-    console.log(req.user)
     var context = {title: "login"}
     res.render('login', context);
 });
