@@ -139,6 +139,12 @@ app.post('/login', passport.authenticate('local', {
     })
 );
 
+app.get('/logout', function(req, res) {
+    req.session.destroy(function (err) {
+        res.redirect('/');
+    });
+});
+
 app.use(function(req, res){
     res.status(404);
     res.render('404');
