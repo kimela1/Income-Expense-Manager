@@ -1,4 +1,13 @@
 window.addEventListener("load", function(e) {
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", "/get_transactions_json", true);
+
+    xhr.onload = function() {
+        console.log(xhr.response);
+    }
+
+    xhr.send();
+
     // Add Data to Transactions Table
     transaction_table.add_transaction(1, "Job", "+500", "2019-10-16", true, "Job");
     transaction_table.add_transaction(2, "Ralphs", "-15", "2019-10-21", false, "Grocery");
