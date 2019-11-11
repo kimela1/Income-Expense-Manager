@@ -65,45 +65,52 @@ app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 app.set('port', 56786);
 
-function get_user(req) {
-    return req.user;
+// Checks if user is logged in. If not, redirect to /login
+function check_user(req, res, next) {
+    if (req.user) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
 }
 
 // Main Page: Running index
-app.get('/', function(req, res, next) {
+app.get('/', check_user, function(req, res, next) {
     var context = {title: "Income and Expense Manager"};
-    var user = get_user(req);
+    var user = req.user;
     
     res.render('dashboard', context);
 });
 
-app.get('/dashboard', function(req, res, next) {
+app.get('/dashboard', check_user, function(req, res, next) {
     var context = {title: "Dashboard"};
     res.render('dashboard', context);
 });
 
-app.get('/reports', function(req, res, next) {
+app.get('/reports', check_user, function(req, res, next) {
     var context = {title: "Reports"};
     res.render('reports', context);
 });
 
-app.get('/categories', function(req, res, next) {
+app.get('/categories', check_user, function(req, res, next) {
     var context = {title: "Categories"};
     res.render('categories', context);
 });
 
 app.get('/signUp', function(req, res, next) {
     var context = {title: "sign up"};
+    context["logged_out_status"] = true;
     res.render('signUp', context);
 });
 
-app.get('/transactions', function(req, res, next) {
+app.get('/transactions', check_user, function(req, res, next) {
     var context = {title: "transactions"};
     res.render('transactions', context);
 });
 
 app.get('/login', function(req, res, next) {
     var context = {title: "login"}
+    context["logged_out_status"] = true;
     res.render('login', context);
 });
 
@@ -125,8 +132,7 @@ app.get('/get_transactions_json', function(req, res, next) {
 app.get('/success', (req, res) => res.send("Welcome "+req.query.username+"!!"));
 app.get('/error', (req, res) => res.send("error logging in"));
 
-app.post('/login',
-    passport.authenticate('local', {
+app.post('/login', passport.authenticate('local', {
         successRedirect: '/',
         failureRedirect: '/login',
         // failureFlash: true
@@ -138,10 +144,10 @@ app.use(function(req, res){
     res.render('404');
 });
   
-app.use(function(err, req, res, next) {
-    res.status(500);
-    res.render('500');
-});
+// app.use(function(err, req, res, next) {
+//     res.status(500);
+//     res.render('500');
+// });
 
 app.listen(app.get('port'), function() {
     console.log('Express started on http://localhost: ' + app.get('port'));
