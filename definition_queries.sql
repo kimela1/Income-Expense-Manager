@@ -11,6 +11,7 @@ CREATE TABLE `inex_user` (
     `user_id` int(11) NOT NULL AUTO_INCREMENT,
     `first_name` varchar(255),
     `last_name` varchar(255),
+    `birth_date` date NOT NULL,
     `username` varchar(255) NOT NULL UNIQUE,
     `password` varchar(255) NOT NULL,
     `email` varchar(255) NOT NULL UNIQUE,
