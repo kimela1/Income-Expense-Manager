@@ -14,12 +14,51 @@ var app = express();
 
 var bodyParser = require('body-parser');
 
-var passport_module = require('./passport_module.js');
+var passport = require('passport');
+    // Strategy (?) to authenticate requires
+var LocalStrategy = require('passport-local').Strategy;
+
+/***********************************************
+ * Local Login / Authentication
+ ************************************************/
+passport.use(new LocalStrategy(
+    function(username, password, done) {
+        console.log(username, password);
+        mysql.pool.query("SELECT * FROM `inex_user` WHERE `username` = '" + username + "'", function(err, result){
+            console.log(result[0])
+            if (err) {return done(err); }
+            if (!result) {
+                return done(null, false, { message: 'Incorrect username.'});
+            }
+            if (!result.length) {
+                return done(null, false, { message: 'No user found.'});
+            }
+
+            if (result[0].password != password) {
+                return done(null, false, { message: 'Incorrect password.'});
+            }
+            return done(null, result[0]);
+        });
+    }
+));
+
+passport.serializeUser(function(user, done) {
+    console.log(user, user.user_id);
+    done(null, user.user_id);
+});
+
+passport.deserializeUser(function(id, done) {
+    mysql.pool.query("SELECT * FROM `inex_user` WHERE `user_id` = '" + id + "'", function(err, result){
+        return done(null, result[0]);
+    });
+});
+
+module.exports.passport = passport;
 
 app.use(express.static('static'));
 app.use(session({secret: 'secret password'}));
-app.use(passport_module.passport.initialize());
-app.use(passport_module.passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -29,10 +68,16 @@ app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 app.set('port', 56786);
 
+function get_user(req) {
+    return req.user;
+}
+
 // Main Page: Running index
 app.get('/', function(req, res, next) {
     var context = {title: "Income and Expense Manager"};
-    console.log(req.user);
+    var user = get_user(req);
+    console.log(user);
+    
     res.render('dashboard', context);
 });
 
@@ -72,28 +117,12 @@ app.get('/success', (req, res) => res.send("Welcome "+req.query.username+"!!"));
 app.get('/error', (req, res) => res.send("error logging in"));
 
 app.post('/login',
-    passport_module.passport.authenticate('local', {
+    passport.authenticate('local', {
         successRedirect: '/',
         failureRedirect: '/login',
         // failureFlash: true
     })
 );
-// app.post('/login',
-//     passport.authenticate('local', { failureRedirect: '/error' }),
-//     function(req, res) {
-//         res.redirect('/success?username='+req.user.username);
-// });
-
-// app.get('/test', function(req, res, next) {
-//     mysql.pool.query("show tables", function(err, result){
-//         if(err){
-//           next(err);
-//           return;
-//         }
-//         res.send(result);
-//       });
-    
-// });
 
 app.use(function(req, res){
     res.status(404);
