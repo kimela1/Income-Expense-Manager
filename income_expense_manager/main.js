@@ -112,6 +112,20 @@ app.get('/login', function(req, res, next) {
     res.render('login', context);
 });
 
+app.get('/get_transactions_json', function(req, res, next) {
+    var query_str = "Select * from `inex_income`";
+    mysql.pool.query(query_str, function(err, result){
+        if(err){
+            next(err);
+            return;
+        }
+        res.send(result);
+    });
+
+    // res.setHeader('Content-Type', 'application/json');
+    // var json = JSON.stringify({});
+    // res.send(json);
+});
 
 app.get('/success', (req, res) => res.send("Welcome "+req.query.username+"!!"));
 app.get('/error', (req, res) => res.send("error logging in"));
