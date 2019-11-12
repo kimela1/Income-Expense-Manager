@@ -97,3 +97,18 @@ select c.name as "category_name", c.category_id, table1.name as "transaction_nam
         inner join inex_expense_category as ec on ec.expense_id = e.expense_id 
         where e.user_id = :user_id)) as table1
     on c.category_id = table1.category_id;
+
+-- Get Income with greater than amount
+select i.name, i.date_received, i.amount, c.name as "category_name" from inex_income as i 
+    inner join inex_user as u on i.user_id = u.user_id and u.user_id = :user_id
+    left join inex_income_category as ic on ic.income_id = i.income_id 
+    left join inex_category as c on c.category_id = ic.category_id
+    where i.amount > :amount;
+
+
+-- Get Expense with greater than amount
+select e.name, e.date_spent, e.amount, c.name as "category_name" from inex_expense as e
+    inner join inex_user as u on e.user_id = u.user_id and u.user_id = :user_id
+    left join inex_expense_category as ec on ec.expense_id = e.expense_id 
+    left join inex_category as c on c.category_id = ec.category_id
+    where e.maount > :amount;
