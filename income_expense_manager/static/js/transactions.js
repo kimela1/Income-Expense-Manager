@@ -3,15 +3,21 @@ window.addEventListener("load", function(e) {
     xhr.open("GET", "/get_transactions_json", true);
 
     xhr.onload = function() {
-        console.log(xhr.response);
+        var transactions = JSON.parse(xhr.response);
+        console.log(typeof(transactions));
+        // Add Data to Transactions Table
+        for (var i = 0; i<transactions.length; i++) {
+            var t = transactions[i];
+            var income_status = (t["type"] == "inex_income" ? true : false),
+                name = t["name"],
+                category_name = t["category_name"],
+                date_str = t["date"],
+                amount = t["amount"];
+            transaction_table.add_transaction(i, name, amount, date_str, income_status, category_name);
+        }
     }
 
     xhr.send();
-
-    // Add Data to Transactions Table
-    transaction_table.add_transaction(1, "Job", "+500", "2019-10-16", true, "Job");
-    transaction_table.add_transaction(2, "Ralphs", "-15", "2019-10-21", false, "Grocery");
-    transaction_table.add_transaction(3, "76 Shell", "-24.36", "2019-10-20", false, "Gas");
 
     var submit_button = document.getElementById("trans-submit");
 
