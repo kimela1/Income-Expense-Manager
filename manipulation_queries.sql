@@ -81,3 +81,17 @@ WHERE inex_category.name = :in_name;
 -- Add a new category into inex_category
 INSERT INTO inex_category (name)
 VALUES (:add_name);
+
+-- Select categories name, id, transaction name, type from of
+-- both income and expense
+select c.name as "category_name", c.category_id, table1.name as "transaction_name", table1.table_name as "type"
+    from inex_category as c
+    left join
+    ((select i.name, 'inex_income' as table_name, i.income_id  as id, ic.category_id
+        from inex_income as i
+        inner join inex_income_category as ic on ic.income_id = i.income_id)
+    union
+    ( select e.name, 'inex_expense' as table_name, e.expense_id as id, ec.category_id 
+        from inex_expense as e
+        inner join inex_expense_category as ec on ec.expense_id = e.expense_id )) as table1
+    on c.category_id = table1.category_id;
