@@ -25,6 +25,23 @@ FROM
                 where date_spent between '2019/11/01' and '2019/11/10'
         ) transactions;
 
+-- Get inex_income and inex_expense in one transaction table along with the categories name
+SELECT  * 
+FROM 
+        (
+            SELECT 'inex_income' as table_name, i.name, i.income_id as id, i.amount, i.date_received as date, c.name as category_name 
+            FROM inex_income as i
+		inner join inex_user as u on i.user_id = u.user_id and u.user_id = :user_id
+    		left join inex_income_category as ic on ic.income_id = i.income_id 
+    		left join inex_category as c on c.category_id = ic.category_id
+            UNION ALL
+            SELECT 'inex_expense' as table_name, e.name, e.expense_id as id, e.amount, e.date_spent as date, c.name as category_name
+            FROM inex_expense as e
+		inner join inex_user as u on e.user_id = u.user_id and u.user_id = :user_id
+		    left join inex_expense_category as ec on ec.expense_id = e.expense_id 
+		    left join inex_category as c on c.category_id = ec.category_id
+        ) transactions;
+
 -- Create new account
 INSERT INTO inex_user (first_name, last_name, username, password, email)
 VALUES (:add_first_name, :add_last_name, :add_username, :add_password, :add_email);
