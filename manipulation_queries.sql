@@ -12,11 +12,26 @@ select e.name, e.date_spent, e.amount, c.name as "category_name" from inex_expen
     left join inex_expense_category as ec on ec.expense_id = e.expense_id 
     left join inex_category as c on c.category_id = ec.category_id;
 
+-- Combine inex_income and inex_expense into one transactions table
+SELECT  * 
+FROM 
+        (
+            SELECT 'inex_income' as table_name, name, income_id as id, amount, date_received as date, user_id 
+            FROM inex_income
+                where date_received between '2019/11/01' and '2019/11/10'
+            UNION ALL
+            SELECT 'inex_expense' as table_name, name, expense_id as id, amount, date_spent as date, user_id
+            FROM inex_expense
+                where date_spent between '2019/11/01' and '2019/11/10'
+        ) transactions;
+
 -- Create new account
 INSERT INTO inex_user (first_name, last_name, username, password, email)
 VALUES (:add_first_name, :add_last_name, :add_username, :add_password, :add_email);
 
 -- Search Transactions table
+-- Able to search name, amount, date, category, income or expense
+
 
 -- Add a new transaction into inex_income
 INSERT INTO inex_income (name, amount, date_received, category_id, user_id)
