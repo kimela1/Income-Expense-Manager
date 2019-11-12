@@ -1,6 +1,22 @@
 window.addEventListener("load", function() {
-    categories_table.add_row("Job", 1, [{"name": "Ralphs", "type": "Expense"}]);
-    categories_table.add_row("Hobby", 1, []);
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", "/get_categories_json", true);
+
+    xhr.onload = function() {
+        var categories = JSON.parse(xhr.response);
+        // Add Data to categories table
+        for (var i = 0; i<categories.length; i++) {
+            var t = categories[i];
+            var type = (t["type"] == "inex_income" ? true : false),
+                transaction_name = t["transaction_name"],
+                category_name = t["category_name"],
+                category_id = t["category_id"];
+
+            categories_table.add_row(category_name, i, [{"name": transaction_name, "type": type}]);
+        }
+    }
+
+    xhr.send();
 });
 
 var categories_table = {

@@ -89,9 +89,11 @@ select c.name as "category_name", c.category_id, table1.name as "transaction_nam
     left join
     ((select i.name, 'inex_income' as table_name, i.income_id  as id, ic.category_id
         from inex_income as i
-        inner join inex_income_category as ic on ic.income_id = i.income_id)
+        inner join inex_income_category as ic on ic.income_id = i.income_id
+        where i.user_id = :user_id)
     union
     ( select e.name, 'inex_expense' as table_name, e.expense_id as id, ec.category_id 
         from inex_expense as e
-        inner join inex_expense_category as ec on ec.expense_id = e.expense_id )) as table1
+        inner join inex_expense_category as ec on ec.expense_id = e.expense_id 
+        where e.user_id = :user_id)) as table1
     on c.category_id = table1.category_id;
