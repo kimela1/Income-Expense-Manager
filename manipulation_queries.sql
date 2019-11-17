@@ -46,13 +46,6 @@ FROM
 INSERT INTO inex_user (first_name, last_name, username, password, email)
 VALUES (:add_first_name, :add_last_name, :add_username, :add_password, :add_email);
 
--- Search inex_income and inex_expense by name
-SELECT * FROM inex_income 
-WHERE name like '%:in_name%'
-UNION
-SELECT * FROM inex_expense 
-WHERE name like '%:in_name%';
-
 -- Add a new transaction into inex_income
 INSERT INTO inex_income (name, amount, date_received, category_id, user_id)
 VALUES (:add_name, :add_amount, :add_date_received, :add_category_id, :add_user_id);
