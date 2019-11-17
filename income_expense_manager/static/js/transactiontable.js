@@ -1,22 +1,34 @@
 class Transaction {
-    constructor(id, name, amount, date_string, income_status, categories)  {
+    constructor(id, name, amount, date_string, type, categories)  {
         this.name = name;
         this.amount = amount;
         this.date_string = date_string,
-        this.income_status = income_status;
+        this.type = type;
         this.categories = []
         if (categories) {
             this.add_categories(categories);
         }
+        this.row_id;
     }
     
     add_categories(categories) {
         for(var i = 0; i<categories.length; i++) {
             this.categories.push(categories[i]);
         }
+
+        if (this.row_id) {
+            var td = document.getElementById("categories-" + this.row_id);
+            var categories_str = "";
+            for(var i = 0; i< this.categories.length; i++) {
+                categories_str += " " + this.categories[i];
+            }
+            td.textContent = categories_str;
+        }
     }
 
     get_tr(row_id) {
+        this.row_id = row_id;
+
         var tr = document.createElement("tr");
 
         tr.setAttribute("id", "tr-" + row_id);
@@ -49,7 +61,7 @@ class Transaction {
         // Income / Expense
         td = document.createElement("td");
         td.setAttribute("id", "type-" + row_id);
-        if (this.income_status) {
+        if (this.type == "inex_income") {
             td.innerText = "Income";
         } else {
             td.innerText = "Expense";
@@ -87,11 +99,49 @@ class Transaction {
             //Get ID from results
             var id = result[1];
 
-            var amount_td       = document.getElementById("amount-" + id),
-                name_td         = document.getElementById("name-" + id),
-                date_td         = document.getElementById("date-" + id),
-                type_td         = document.getElementById("type-" + id),
-                categories_td   = document.getElementById("categories-" + id);
+            this.change_edit_form();
+        }.bind(this));
+
+        td.append(btn);
+
+        // DELETE BUTTON
+        btn = document.createElement("button");
+        btn.innerText = "❌";         
+        btn.setAttribute("type", "button");   
+
+        btn.setAttribute("id", "delete-" + row_id);
+        btn.addEventListener("click", function(e) {
+            // Get ID of Button Element
+            var element_id = e.target.id;
+
+            // Match this with the Regular Expression to get # at the end (true id)
+            var id_regexp = /-(\d+)/;
+            var result = id_regexp.exec(element_id);
+            //Get ID from results
+            var id = result[1];
+
+            // Get TR element by the ending ID
+            var tr = document.getElementById("tr-" + id);
+            // Get its parent element (because you have to delete it from the parent element)
+            // It will be <tbody> in this case
+            var parent_element = tr.parentElement;
+            // Remove the row element tr from the tbody element with removeChild
+            parent_element.removeChild(tr);
+        });
+    
+        td.append(btn);             
+        tr.appendChild(td);
+        
+        return tr;
+    }
+
+    change_edit_form() {
+        var row_id = this.row_id;
+        var amount_td       = document.getElementById("amount-" + row_id),
+            name_td         = document.getElementById("name-" + row_id),
+            date_td         = document.getElementById("date-" + row_id),
+            type_td         = document.getElementById("type-" + row_id),
+            categories_td   = document.getElementById("categories-" + row_id);
 
             var amount = parseInt(amount_td.innerText),
                 name = name_td.innerText,
@@ -147,60 +197,45 @@ class Transaction {
             btn.classList.add("btn");
             btn.innerText = "➕";
             categories_td.append(btn);
-        });
-
-        td.append(btn);
-
-        // DELETE BUTTON
-        btn = document.createElement("button");
-        btn.innerText = "❌";         
-        btn.setAttribute("type", "button");   
-
-        btn.setAttribute("id", "delete-" + row_id);
-        btn.addEventListener("click", function(e) {
-            // Get ID of Button Element
-            var element_id = e.target.id;
-
-            // Match this with the Regular Expression to get # at the end (true id)
-            var id_regexp = /-(\d+)/;
-            var result = id_regexp.exec(element_id);
-            //Get ID from results
-            var id = result[1];
-
-            // Get TR element by the ending ID
-            var tr = document.getElementById("tr-" + id);
-            // Get its parent element (because you have to delete it from the parent element)
-            // It will be <tbody> in this case
-            var parent_element = tr.parentElement;
-            // Remove the row element tr from the tbody element with removeChild
-            parent_element.removeChild(tr);
-        });
-    
-        td.append(btn);             
-        tr.appendChild(td);
-        
-        return tr;
     }
 }
 
 class Transaction_Table {
     constructor(tbody_id) {
+        this.num_transactions = 0;
         this.tbody_id = tbody_id;
-        this.transactions = [];
+        this.transactions = {
+            "inex_income": {},
+            "inex_expense": {}
+        };
     }
 
-    create_table() {
-        
-    }
-
-    add_transaction(id, name, amount, date_string, income_status, categories_str) {
+    add_transaction(transaction_object) {
         var tbody = document.getElementById("transactions-tbody");
-        var t = new Transaction(id, name, amount, date_string, income_status, [categories_str,]);
-        this.transactions.push(t);
 
-        var tr = t.get_tr(this.transactions.length);
+        var id = transaction_object["id"],
+            type = transaction_object["type"],
+            categories = [transaction_object["category_name"],]
 
-        tbody.append(tr);
+        if (this.transactions[type][id]) {
+            this.transactions[type][id].add_categories(categories)
+        } else {
+            this.num_transactions++;
+
+            var t = new Transaction(
+                id, 
+                transaction_object["name"], 
+                transaction_object["amount"], 
+                transaction_object["date_string"], 
+                type,
+                categories);
+
+            this.transactions[type][id] = t;
+    
+            var tr = t.get_tr(this.num_transactions);
+    
+            tbody.append(tr);
+        }
     }
 
     create_edit_transaction_row() {

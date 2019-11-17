@@ -10,13 +10,16 @@ window.addEventListener("load", function(e) {
         // Add Data to Transactions Table
         for (var i = 0; i<transactions.length; i++) {
             var t = transactions[i];
-            var income_status = (t["type"] == "inex_income" ? true : false),
-                name = t["name"],
-                category_name = t["category_name"],
-                date_str = t["date"],
-                amount = t["amount"],
-                id = t["id"];
-            ttable.add_transaction(id, name, amount, date_str, income_status, category_name);
+            var o = {
+                type: t["type"],
+                name: t["name"],
+                category_name: t["category_name"],
+                date_string: t["date"],
+                amount: t["amount"],
+                id: t["id"]
+            }
+            
+            ttable.add_transaction(o);
         }
     }
 
