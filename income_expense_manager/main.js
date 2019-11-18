@@ -118,13 +118,13 @@ app.get('/get_transactions_json', function(req, res, next) {
     var query_str = `SELECT  *
         FROM 
             (
-                SELECT 'inex_income' as type, i.name, i.income_id as id, i.amount, i.date_received as date, c.name as category_name
+                SELECT 'inex_income' as type, i.income_name, i.income_id as id, i.amount, i.date_received as date, c.category_name.name as category_name
                 FROM inex_income as i
             inner join inex_user as u on i.user_id = u.user_id and u.user_id = ${user_id}
                 left join inex_income_category as ic on ic.income_id = i.income_id
                 left join inex_category as c on c.category_id = ic.category_id
                 UNION ALL
-                SELECT 'inex_expense' as type, e.name, e.expense_id as id, e.amount, e.date_spent as date, c.name as category_name
+                SELECT 'inex_expense' as type, e.expense_name, e.expense_id as id, e.amount, e.date_spent as date, c.category_name as category_name
                 FROM inex_expense as e
             inner join inex_user as u on e.user_id = u.user_id and u.user_id = ${user_id}
                 left join inex_expense_category as ec on ec.expense_id = e.expense_id
@@ -142,15 +142,15 @@ app.get('/get_transactions_json', function(req, res, next) {
 
 app.get('/get_categories_json', function(req, res, next) {
     var user_id = req.user.user_id;
-    var query_str = `select c.name as "category_name", c.category_id, table1.name as "transaction_name", table1.table_name as "type"
+    var query_str = `select c.category_name as "category_name", c.category_id, table1.name as "transaction_name", table1.table_name as "type"
     from inex_category as c
     left join
-    ((select i.name, 'inex_income' as table_name, i.income_id  as id, ic.category_id
+    ((select i.income_name, 'inex_income' as table_name, i.income_id  as id, ic.category_id
         from inex_income as i
         inner join inex_income_category as ic on ic.income_id = i.income_id
         where i.user_id = ${user_id})
     union
-    ( select e.name, 'inex_expense' as table_name, e.expense_id as id, ec.category_id 
+    ( select e.expense_name, 'inex_expense' as table_name, e.expense_id as id, ec.category_id 
         from inex_expense as e
         inner join inex_expense_category as ec on ec.expense_id = e.expense_id 
         where e.user_id = ${user_id})) as table1
