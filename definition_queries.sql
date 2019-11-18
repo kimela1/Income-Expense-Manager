@@ -18,7 +18,7 @@ CREATE TABLE `inex_user` (
 
 CREATE TABLE `inex_expense` (
     `expense_id` int(11) NOT NULL AUTO_INCREMENT,
-    `name` varchar(255) NOT NULL,
+    `expense_name` varchar(255) NOT NULL,
     `amount` DECIMAL(10,2) NOT NULL,
     `date_spent` date NOT NULL,
     `user_id` int(11),
@@ -29,7 +29,7 @@ CREATE TABLE `inex_expense` (
 
 CREATE TABLE `inex_income` (
     `income_id` int(11) NOT NULL AUTO_INCREMENT,
-    `name` varchar(255) NOT NULL,
+    `income_name` varchar(255) NOT NULL,
     `amount` DECIMAL(10,2) NOT NULL,
     `date_received` date NOT NULL,
     `user_id` int(11),
@@ -40,7 +40,7 @@ CREATE TABLE `inex_income` (
 
 CREATE TABLE `inex_category` (
     `category_id` int(11) NOT NULL AUTO_INCREMENT,
-    `name` varchar(255) NOT NULL UNIQUE,
+    `category_name` varchar(255) NOT NULL UNIQUE,
     PRIMARY KEY(`category_id`)
 ) ENGINE=innodb;
 
@@ -65,34 +65,34 @@ VALUES ('Bob', 'Smith', 'test@123abc.com', 'test', '123abc');
 
 SELECT `user_id` INTO @user_id FROM `inex_user` WHERE `email` = 'test@123abc.com';
 
-INSERT INTO `inex_expense` (`name`, `amount`, `date_spent`, `user_id`)
+INSERT INTO `inex_expense` (`expense_name`, `amount`, `date_spent`, `user_id`)
 VALUES ('Ralphs', 1.50, '2019-11-01', @user_id),
 ('76 Gas Station', 32.66, '2019-10-28', @user_id);
 
-INSERT INTO `inex_income` (`name`, `amount`, `date_received`, `user_id`)
+INSERT INTO `inex_income` (`income_name`, `amount`, `date_received`, `user_id`)
 VALUES ('Money Inc', 150, '2019-11-05', @user_id),
 ('Ebay', 28.66, '2019-10-25', @user_id);
 
-INSERT INTO `inex_category` (`name`)
+INSERT INTO `inex_category` (`category_name`)
 VALUES ('Job'),
 ('Groceries'),
 ('Gas'),
 ('Snacks');
 
 SELECT `expense_id` INTO @expense_id1 FROM `inex_expense` 
-WHERE `name` = 'Ralphs' and `amount` = 1.50 and `date_spent` = '2019-11-01';
+WHERE `expense_name` = 'Ralphs' and `amount` = 1.50 and `date_spent` = '2019-11-01';
 
 SELECT `category_id` INTO @category_id1 FROM `inex_category`
-WHERE `name` = 'Groceries';
+WHERE `category_name` = 'Groceries';
 
 SELECT `expense_id` INTO @expense_id2 FROM `inex_expense` 
-WHERE `name` = '76 Gas Station' and `amount` = 32.66 and `date_spent` = '2019-10-28';
+WHERE `expense_name` = '76 Gas Station' and `amount` = 32.66 and `date_spent` = '2019-10-28';
 
 SELECT `category_id` INTO @category_id2 FROM `inex_category`
-WHERE `name` = 'Gas';
+WHERE `category_name` = 'Gas';
 
 SELECT `category_id` INTO @category_id1a FROM `inex_category`
-WHERE `name` = 'Snacks';
+WHERE `category_name` = 'Snacks';
 
 INSERT INTO `inex_expense_category` (`expense_id`, `category_id`)
 VALUES (@expense_id1, @category_id1),
@@ -101,10 +101,10 @@ VALUES (@expense_id1, @category_id1),
 
 
 SELECT `income_id` INTO @income_id1 FROM `inex_income`
-WHERE `name` = 'Money Inc' and `amount` = 150 and `date_received` = '2019-11-05';
+WHERE `income_name` = 'Money Inc' and `amount` = 150 and `date_received` = '2019-11-05';
 
 SELECT `category_id` INTO @category_id3 FROM `inex_category`
-WHERE `name` = 'Job';
+WHERE `category_name` = 'Job';
 
 INSERT INTO `inex_income_category` (`income_id`, `category_id`)
 VALUES (@income_id1, @category_id3);
