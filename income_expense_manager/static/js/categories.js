@@ -1,4 +1,4 @@
-window.addEventListener("load", function() {
+/* window.addEventListener("load", function() {
     let xhr = new XMLHttpRequest();
     xhr.open("GET", "/get_categories_json", true);
 
@@ -19,6 +19,7 @@ window.addEventListener("load", function() {
     xhr.send();
 });
 
+
 var categories_table = {
     add_row(category_name, category_id, transaction_arr) {
         var tbody = document.getElementById("categories-tbody");
@@ -35,6 +36,7 @@ var categories_table = {
 
         td = document.createElement("td");
 
+        // EDIT BUTTON
         btn = document.createElement("button");
         btn.innerText = "📝"; 
         btn.setAttribute("type", "button");
@@ -93,17 +95,24 @@ var categories_table = {
     
         tr.append(td);
 
-        td = document.createElement("td");
-        var str = "";
-
-        for (var i = 0; i < transaction_arr.length; i++) {
-            str += transaction_arr[i]["name"] + " - [" + transaction_arr[i]["type"] + "] ";
-        }
-
-        td.innerText = str;
-
-        tr.append(td);
-
         tbody.append(tr);
     },
+}; 
+*/
+
+function categories_search() {
+    // Get name 
+    var search_name = document.getElementById('search_name').value
+    // Redirect to URL
+    window.location = '/categories/search/' + encodeURI(search_name)
+}
+
+function delete_categories(id){
+    $.ajax({
+        url: '/categories/' + id,
+        type: 'DELETE',
+        success: function(result){
+            window.location.reload(true);
+        }
+    })
 };
