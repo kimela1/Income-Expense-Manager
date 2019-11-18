@@ -70,29 +70,60 @@
 
 
 <button type="button" class="btn" id="add-trans-btn">Add Transaction</button>
-<form action="" method="post" id="trans-form" hidden>
-    <br><br>
-    New Transaction: <br><br>
-    Name:
-        <input id="name-input" type="text" name="input"> <br><br>
-    Amount:
-        <input id="amount-input" type="number" name="amount" value="">
-    Date:
-        <input id="date-input" type="date" name="date" value=""><br><br>
-        <input id="income-radio" type="radio" name="type" value="income" checked> Income <br>
-        <input type="radio" name="type" value="expense"> Expense <br><br>
-    Categories<br>
-    <select class="custom-select" multiple>
-        <option selected>Job</option>
-        <option>Grocery</option>
-        <option>Gas</option>
-    </select><br>
-    <button type="button" class="btn btn-outline-primary btn-sm">➕ Categories</button>
-    <br><br>
+<form action="" method="post" id="trans-form">
+    <h2>New Transaction:</h2>
+    <div class="form-group row">
+        <label for="name-input" class="col-sm-2 col-form-label">New Transaction:</label>
+        <div class="col-sm-4">
+            <input id="name-input" type="text" name="input" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="amount-input" class="col-sm-2 col-form-label">Amount:</label>
+        <div class="col-sm-4">
+            <input id="amount-input" type="number" name="amount" value="" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="date-input" class="col-sm-2 col-form-label">Date:</label>
+        <div class="col-sm-4">
+            <input id="date-input" type="date" name="date" value=""><br><br required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Type</label>
+        <div class="col-sm-6">
+            <div class="custom-control custom-radio">
+                <input class="form-check-input" id="income-radio" type="radio" name="type" value="income" checked>
+                <label class="form-check-label" for="income-radio">
+                    Income
+                </label>
+            </div>
+            <div class="custom-control custom-radio">
+                <input class="form-check-input" id="expense-radio" type="radio" name="type" value="expense">
+                <label class="form-check-label" for="expense-radio">
+                    Expense
+                </label>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="categories-select" class="col-sm-2">Categories</label>
+        <select class="custom-select" id="categories-select" multiple>
+            <option>Job</option>
+            <option>Grocery</option>
+            <option>Gas</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <button type="button" class="btn btn-outline-primary btn-sm">➕ Categories</button>
+    </div>
     <input type="submit" value="Submit" id="trans-submit">
     <input type="button" value="Cancel">
     <br><br>
 </form>
 
+<script src="js/addtransactionform.js"></script>
 <script src="js/transactiontable.js"></script>
 <script src="js/transactions.js"></script>
