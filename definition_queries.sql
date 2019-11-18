@@ -60,8 +60,8 @@ CREATE TABLE `inex_income_category` (
     FOREIGN KEY (`category_id`) REFERENCES `inex_category` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=innodb;
 
-INSERT INTO `inex_user`(`first_name`, `last_name`, `email`, `username`, `password`)
-VALUES ('Bob', 'Smith', 'test@123abc.com', 'test', '123abc');
+INSERT INTO `inex_user`(`first_name`, `last_name`, `email`, `username`, `password`, `birth_date`)
+VALUES ('Bob', 'Smith', 'test@123abc.com', 'test', '123abc', '1980-01-01');
 
 SELECT `user_id` INTO @user_id FROM `inex_user` WHERE `email` = 'test@123abc.com';
 

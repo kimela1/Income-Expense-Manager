@@ -118,7 +118,7 @@ app.get('/get_transactions_json', function(req, res, next) {
     var query_str = `SELECT  *
         FROM 
             (
-                SELECT 'inex_income' as type, i.income_name, i.income_id as id, i.amount, i.date_received as date, c.category_name.name as category_name
+                SELECT 'inex_income' as type, i.income_name, i.income_id as id, i.amount, i.date_received as date, c.category_name as category_name
                 FROM inex_income as i
             inner join inex_user as u on i.user_id = u.user_id and u.user_id = ${user_id}
                 left join inex_income_category as ic on ic.income_id = i.income_id
