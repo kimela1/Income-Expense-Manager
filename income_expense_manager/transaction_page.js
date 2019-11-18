@@ -1,6 +1,20 @@
 module.exports = function(app) {
     var mysql = require('./localdb.js');
 
+    app.get('/get_categories_json', function(req, res, next) {
+        var user_id = req.user.user_id;
+        var query_str = `SELECT  category_id, category_name 
+            FROM inex_category WHERE inex_category.user_id = ${user_id}`;
+        mysql.pool.query(query_str, function(err, result){
+            if(err){
+                next(err);
+                return;
+            }
+            res.setHeader('Content-Type', 'application/json');
+            res.send(result);
+        });
+    });
+
     app.get('/get_transactions_json', function(req, res, next) {
         var user_id = req.user.user_id;
         var query_str = `SELECT  *
@@ -27,4 +41,6 @@ module.exports = function(app) {
             res.send(result);
         });
     });
+
+
 }

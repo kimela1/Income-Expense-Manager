@@ -3,6 +3,7 @@ class AddTransactionForm {
         this.set_date();
         this.hide_handler();
         this.submit_handler();
+        this.set_categories();
 
         this.hidden = false;
         this.toggle_hide();
@@ -23,6 +24,34 @@ class AddTransactionForm {
         );
     }
 
+    set_categories() {
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "/get_categories_json", true);
+
+        xhr.onload = function() {
+            var categories = JSON.parse(xhr.response);
+
+            var select = document.getElementById("categories-select"),
+                option;
+
+            // Add Categories to Select Menu
+            for (var i = 0; i<categories.length; i++) {
+                var c = categories[i];
+                
+                var id = c.category_id,
+                    name = c.category_name;
+
+                option = document.createElement("option");
+                option.innerText = name;
+                option.setAttribute("value", id);
+                
+                select.append(option);
+            }
+        }
+
+        xhr.send();
+    }
+
     toggle_hide() {
         var show_transactions_btn = document.getElementById("add-trans-btn");
         var add_form = document.getElementById("trans-form");
@@ -40,6 +69,8 @@ class AddTransactionForm {
     }
 
     submit_handler() {
+        var submit_button = document.getElementById("trans-submit");
+
         submit_button.addEventListener("click", function(e) {
             e.preventDefault();
     
@@ -51,13 +82,13 @@ class AddTransactionForm {
                 //edit_button = document.getElementById("edit_button"),
                 //delete_button = document.getElementById("delete_button");
             
-            var result = [];
+            var categories = [];
             var select = document.getElementById("categories-select");
             var option;
             for (var i = 0; i < select.length; i++) {
                 option = select[i];
                 if (option.selected) {
-                    console.log(select[i]);
+                    categories.push(option.value);
                 }
             }
     
@@ -66,20 +97,21 @@ class AddTransactionForm {
             var num_rows = tbody.childElementCount;
             var id = num_rows+1;
             
-            var name = name_input.value,
-                amount = amount_input.value,
-                date_string = date_input.value;
-            
-            var income_status;
-            // If income radio is checked
-            if (income_radio.checked)
-                income_status = true;
-            else
-                income_status = false;
+            var new_transaction = {
+                name: name_input.value,
+                amount: amount_input.value,
+                date: date_input.value,
+                type:  document.querySelector('input[name=type]:checked').value,
+                categories: categories,
+            };
+
+            console.log(new_transaction);
     
             // ttable.add_transaction(id, name, amount, date_string, income_status);
             
             document.getElementById("trans-form").reset();
         });
     }
+
+
 }

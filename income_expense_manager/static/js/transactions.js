@@ -23,7 +23,5 @@ window.addEventListener("load", function(e) {
         }
     }
 
-    xhr.send();
-
-    var submit_button = document.getElementById("trans-submit");
+    xhr.send();    
 });

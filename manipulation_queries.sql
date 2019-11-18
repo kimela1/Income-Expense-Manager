@@ -108,3 +108,6 @@ select e.name, e.date_spent, e.amount, c.name as "category_name" from inex_expen
     left join inex_expense_category as ec on ec.expense_id = e.expense_id 
     left join inex_category as c on c.category_id = ec.category_id
     where e.maount > :amount;
+
+-- Get Categories With User_id
+SELECT  SELECT  category_id, category_name FROM category WHERE category.user_id = :user_id;
