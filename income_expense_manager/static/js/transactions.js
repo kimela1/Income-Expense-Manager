@@ -15,6 +15,7 @@ window.addEventListener("load", function(e) {
                 type: t["type"],
                 name: t["name"],
                 category_name: t["category_name"],
+                category_id: t["category_id"],
                 date_string: t["date"],
                 amount: t["amount"],
                 id: t["id"]
@@ -22,6 +23,5 @@ window.addEventListener("load", function(e) {
             ttable.add_transaction(o);
         }
     }
-
     xhr.send();    
 });

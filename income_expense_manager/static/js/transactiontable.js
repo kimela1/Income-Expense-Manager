@@ -1,18 +1,20 @@
 class Transaction {
-    constructor(id, name, amount, date_string, type, categories)  {
+    constructor(id, name, amount, date_string, type, category_ids, categories)  {
         this.name = name;
         this.amount = amount;
         this.date_string = date_string,
         this.type = type;
         this.categories = []
+        this.category_ids = []
         if (categories) {
-            this.add_categories(categories);
+            this.add_categories(category_ids, categories);
         }
         this.row_id;
     }
     
-    add_categories(categories) {
+    add_categories(category_ids, categories) {
         for(var i = 0; i<categories.length; i++) {
+            this.category_ids.push(category_ids[i]);
             this.categories.push(categories[i]);
         }
 
@@ -215,10 +217,12 @@ class Transaction_Table {
 
         var id = transaction_object["id"],
             type = transaction_object["type"],
-            categories = [transaction_object["category_name"],]
+            categories = [transaction_object["category_name"],],
+            category_ids = [transaction_object["category_id"],];
 
+        // Transaction already exists, Add only Category
         if (this.transactions[type][id]) {
-            this.transactions[type][id].add_categories(categories)
+            this.transactions[type][id].add_categories(category_ids, categories)
         } else {
             this.num_transactions++;
 
@@ -228,7 +232,9 @@ class Transaction_Table {
                 transaction_object["amount"], 
                 transaction_object["date_string"], 
                 type,
-                categories);
+                category_ids,
+                categories,
+                );
 
             this.transactions[type][id] = t;
     
