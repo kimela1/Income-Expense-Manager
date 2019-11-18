@@ -2,19 +2,46 @@
     <h3 class="title is-3">Categories</h3>
 </div>
 
-<div class="input-group mb-4">
-<input class="form-control" type="text" placeholder="Search" aria-label="Search">
-</div>
+<!-- Search box -->
+<form class="form-inline" action="" method="">
+  <div class="form-group mx-sm-3 mb-2">
+    <label for="cat-search" class="sr-only">Search by category name</label>
+    <input type="text" class="form-control" id="cat-search_name" placeholder="Search by name">
+  </div>
+  <button type="submit" class="btn" id="cat-search-submit" onclick="cat_search()">Search</button><br><br>
+</form>
 
+<!-- Add to categories-->
+<form class="form-inline" action="" method="">
+  <div class="form-group mx-sm-3 mb-2">
+    <input type="text" class="form-control" id="cat-add" placeholder="Enter new category name">
+  </div>
+  <button type="submit" class="btn" id="cat-add-submit">➕ Category</button><br><br>
+    {{#each categories}}
+        <option value="{{id}}">{{name}}</option>
+    {{/each}}
+</form>
+
+<!-- Table -->
 <table class="table table-striped" id="categories-table">
     <thead>
         <tr>
             <th scope="col">Category Name</th>
-            <th scope="col">Options</th>
             <th scope="col">Transaction Name - Type</th>
+            <th scope="col">Options</th>
         </tr>
     </thead>
-    <tbody id="categories-tbody"></tbody>
+    <tbody id="categories-tbody">
+        {{#each categories}} 
+        <tr> 
+            <td>{{category_name}}</td> 
+            <td>{{transaction_name}}</td> 
+            <td><button onclick="update_categories({{id}})">📝</button>
+                <button onclick="delete_categories({{id}})">❌</button>
+            </td>
+        </tr> 
+        {{/each}}
+    </tbody>
 </table>
 
 <script src="js/categories.js"></script>
