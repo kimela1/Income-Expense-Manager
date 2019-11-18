@@ -39,8 +39,11 @@ CREATE TABLE `inex_income` (
 ) ENGINE=innodb;
 
 CREATE TABLE `inex_category` (
+    `user_id` int(11) NOT NULL,
     `category_id` int(11) NOT NULL AUTO_INCREMENT,
     `category_name` varchar(255) NOT NULL UNIQUE,
+    KEY `user_id` (`user_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `inex_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY(`category_id`)
 ) ENGINE=innodb;
 
@@ -73,11 +76,11 @@ INSERT INTO `inex_income` (`income_name`, `amount`, `date_received`, `user_id`)
 VALUES ('Money Inc', 150, '2019-11-05', @user_id),
 ('Ebay', 28.66, '2019-10-25', @user_id);
 
-INSERT INTO `inex_category` (`category_name`)
-VALUES ('Job'),
-('Groceries'),
-('Gas'),
-('Snacks');
+INSERT INTO `inex_category` (`category_name`, `user_id`)
+VALUES ('Job', @user_id),
+('Groceries', @user_id),
+('Gas', @user_id),
+('Snacks', @user_id);
 
 SELECT `expense_id` INTO @expense_id1 FROM `inex_expense` 
 WHERE `expense_name` = 'Ralphs' and `amount` = 1.50 and `date_spent` = '2019-11-01';
