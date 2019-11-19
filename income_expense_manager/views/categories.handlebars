@@ -10,11 +10,8 @@
 </form>
 
 <!-- Add to categories-->
-<form id="add-categories" action="/categories" method="post" class="form-inline" >
+<form id="add-categories" action="/add_categories" method="post" class="form-inline" >
     <input type="text" name="category_name" placeholder="Enter new category name" class="form-control">
-    {{#each categories}}
-    <option value="{{id}}">{{name}}</option>
-    {{/each}}
     <button type="submit" class="btn" id="add-submit">➕ Category</button><br><br>
 </form>
 
@@ -40,4 +37,3 @@
 </table>
 
 <script src="js/categories.js"></script>
-<script src="js/categories_page.js"></script>

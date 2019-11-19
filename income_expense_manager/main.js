@@ -91,10 +91,10 @@ app.get('/reports', check_user, function(req, res, next) {
     res.render('reports', context);
 });
 
-app.get('/categories', check_user, function(req, res, next) {
+/*app.get('/categories', check_user, function(req, res, next) {
     var context = {title: "Categories"};
     res.render('categories', context);
-});
+});*/
 
 app.get('/signUp', function(req, res, next) {
     var context = {title: "sign up"};
