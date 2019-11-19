@@ -63,7 +63,7 @@ app.use(bodyParser.json());
 app.engine('handlebars', exphbs());
 
 app.set('view engine', 'handlebars');
-app.set('port', 56786);
+app.set('port', 54247);
 
 // Checks if user is logged in. If not, redirect to /login
 function check_user(req, res, next) {
