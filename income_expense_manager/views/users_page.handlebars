@@ -1,0 +1,48 @@
+<form id="users-form">
+    <div class="form-group row">
+
+        <div class="col-sm-6">
+            <label for="first-name-input">
+                First name
+            </label>
+            <input type="text" class="form-control" id="last-name-input" value={{{first_name}}} required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-6">
+            <label for="last-name-input">
+                Last name
+            </label>
+            <input type="text" class="form-control" id="last-name-input" value={{{last_name}}} required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-6">
+            <label for="email-input">
+                Email
+            </label>
+            <input type="text" class="form-control" id="email-input" value={{{email}}} required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-6">
+            <label for="password-input">
+                New Password
+            </label>
+            <input type="password" class="form-control" id="password-input" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-6">
+            <label for="password-reinput">
+                Retype Password
+            </label>
+            <input type="password" class="form-control" id="password-reinput" required>
+        </div>
+    </div>
+    <button type="submit">Submit</button>
+</form>
+
+<script src="js/users_page.js"></script>
+
+{{{first_name}}}

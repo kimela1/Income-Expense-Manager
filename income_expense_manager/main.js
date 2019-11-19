@@ -81,6 +81,25 @@ app.get('/', check_user, function(req, res, next) {
     res.redirect('/transactions');
 });
 
+app.get('/users_page', check_user, function(req, res, next) {
+    var user_id = req.user.user_id;
+        var query_str = `SELECT first_name, last_name, email 
+        FROM inex_user WHERE user_id = ${user_id}`;
+    var context = {title: "User's Page"};
+
+    mysql.pool.query(query_str, function(err, result){
+        if(err){
+            next(err);
+            return;
+        }
+        context["first_name"] = result[0]["first_name"];
+        context["last_name"] = result[0]["last_name"];
+        context["email"] = result[0]["email"];
+
+        res.render('users_page', context)
+    });
+});
+
 app.get('/dashboard', check_user, function(req, res, next) {
     var context = {title: "Dashboard"};
     res.render('dashboard', context);
