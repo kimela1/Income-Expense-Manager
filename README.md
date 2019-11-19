@@ -1,1 +1,1 @@
-# Income-Expense-Manager
+# Income and Expense Manager
