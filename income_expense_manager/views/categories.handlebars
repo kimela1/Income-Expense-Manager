@@ -3,23 +3,16 @@
 </div>
 
 <!-- Search box -->
-<form class="form-inline" action="" method="">
-  <div class="form-group mx-sm-3 mb-2">
-    <label for="cat-search" class="sr-only">Search by category name</label>
-    <input type="text" class="form-control" id="cat-search_name" placeholder="Search by name">
-  </div>
-  <button type="submit" class="btn" id="cat-search-submit" onclick="cat_search()">Search</button><br><br>
+<form id="search-categories" class="form-inline" action="" method="">
+    <label for="search" class="sr-only">Search by category name</label>
+    <input type="text" class="form-control" id="search_name" placeholder="Search by name">
+    <button type="submit" class="btn" id="search-submit" onclick="categories_search()">Search</button><br><br>
 </form>
 
 <!-- Add to categories-->
-<form class="form-inline" action="" method="">
-  <div class="form-group mx-sm-3 mb-2">
-    <input type="text" class="form-control" id="cat-add" placeholder="Enter new category name">
-  </div>
-  <button type="submit" class="btn" id="cat-add-submit">➕ Category</button><br><br>
-    {{#each categories}}
-        <option value="{{id}}">{{name}}</option>
-    {{/each}}
+<form id="add-categories" action="/add_categories" method="post" class="form-inline" >
+    <input type="text" name="category_name" placeholder="Enter new category name" class="form-control">
+    <button type="submit" class="btn" id="add-submit">➕ Category</button><br><br>
 </form>
 
 <!-- Table -->
@@ -27,20 +20,19 @@
     <thead>
         <tr>
             <th scope="col">Category Name</th>
-            <th scope="col">Transaction Name - Type</th>
             <th scope="col">Options</th>
         </tr>
     </thead>
     <tbody id="categories-tbody">
-        {{#each categories}} 
+        {{#each categories}}
         <tr> 
             <td>{{category_name}}</td> 
-            <td>{{transaction_name}}</td> 
-            <td><button onclick="update_categories({{id}})">📝</button>
+            <td>
+                <button onclick="update_categories({{id}})">📝</button>
                 <button onclick="delete_categories({{id}})">❌</button>
             </td>
         </tr> 
-        {{/each}}
+        {{/each}} 
     </tbody>
 </table>
 

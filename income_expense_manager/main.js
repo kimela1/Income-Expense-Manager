@@ -91,10 +91,10 @@ app.get('/reports', check_user, function(req, res, next) {
     res.render('reports', context);
 });
 
-app.get('/categories', check_user, function(req, res, next) {
+/*app.get('/categories', check_user, function(req, res, next) {
     var context = {title: "Categories"};
     res.render('categories', context);
-});
+});*/
 
 app.get('/signUp', function(req, res, next) {
     var context = {title: "sign up"};
@@ -115,31 +115,7 @@ app.get('/login', function(req, res, next) {
 
 require('./transaction_page.js')(app);
 
-app.get('/get_categories_json', function(req, res, next) {
-    var user_id = req.user.user_id;
-    var query_str = `select c.category_name as "category_name", c.category_id, table1.name as "transaction_name", table1.table_name as "type"
-    from inex_category as c
-    left join
-    ((select i.income_name, 'inex_income' as table_name, i.income_id  as id, ic.category_id
-        from inex_income as i
-        inner join inex_income_category as ic on ic.income_id = i.income_id
-        where i.user_id = ${user_id})
-    union
-    ( select e.expense_name, 'inex_expense' as table_name, e.expense_id as id, ec.category_id 
-        from inex_expense as e
-        inner join inex_expense_category as ec on ec.expense_id = e.expense_id 
-        where e.user_id = ${user_id})) as table1
-    on c.category_id = table1.category_id;`;
-
-    mysql.pool.query(query_str, function(err, result){
-        if(err){
-            next(err);
-            return;
-        }
-        res.setHeader('Content-Type', 'application/json');
-        res.send(result);
-    });
-});
+require('./category_page.js')(app);
 
 app.get('/success', (req, res) => res.send("Welcome "+req.query.username+"!!"));
 app.get('/error', (req, res) => res.send("error logging in"));
