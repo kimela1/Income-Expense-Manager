@@ -51,62 +51,70 @@ module.exports = function(app) {
 
     app.post('/ajax-add-transaction', function(req, res, next) {
         var user_id = req.user.user_id;
-        var transaction_info = req.body;
+
+        if (user_id) {
+            var transaction_info = req.body;
         
-        var name = transaction_info["name"],
-            date = transaction_info["date"],
-            type = transaction_info["type"],
-            amount = transaction_info["amount"],
-            categories = transaction_info["category_id"];
-        if (type == "income")
-            date_parameter = 'date_received'
-        else if (type == "expense")
-            date_parameter = 'date_spent'
-        else
-            res.status(500).send("income was not correct");
+            var name = transaction_info["name"],
+                date = transaction_info["date"],
+                type = transaction_info["type"],
+                amount = transaction_info["amount"],
+                categories = transaction_info["category_id"];
+            if (type == "income")
+                date_parameter = 'date_received'
+            else if (type == "expense")
+                date_parameter = 'date_spent'
+            else
+                res.status(500).send("income was not correct");
 
-        var values = [name, amount, date, user_id];
+            var values = [name, amount, date, user_id];
 
-        var query_str = `INSERT INTO inex_${type} (${type}_name, amount, ${date_parameter}, user_id) 
-            VALUES (?, ?, ?, ?)`;
+            var query_str = `INSERT INTO inex_${type} (${type}_name, amount, ${date_parameter}, user_id) 
+                VALUES (?, ?, ?, ?)`;
 
-        // Insert Transaction
-        mysql.pool.query(query_str, values, function(err, result){
-            if(err){
-                next(err);
-                return;
-            }
-
-            var get_id_str = `
-                SELECT max(${type}_id) FROM inex_${type}
-                WHERE inex_${type}.user_id = ${user_id}
-            `;
-            // GET Transaction ID
-            mysql.pool.query(get_id_str, function(err, result){
-                var transaction_id = result[0][`max(${type}_id)`];
-
-                // Insert Cartegories relationships if any
-                if (categories.length > 0) {
-                    var category_id;
-
-                    var cat_query = `INSERT INTO inex_${type}_category (${type}_id, category_id) VALUES `;
-                    for (var i = 0; i < categories.length; i++) {
-                        category_id = categories[i]
-                        cat_query += `(${transaction_id}, ${category_id}),`
-                    }
-                    cat_query = cat_query.slice(0,-1);
-                    cat_query += ";"
-
-                    mysql.pool.query(cat_query, function(err, result){
-                        res.setHeader('Content-Type', 'application/json');
-                        res.send({
-                            "transaction": transaction_id});
-                    });
-                } else {
-                    res.setHeader('Content-Type', 'application/json');
-                    res.send({"transaction": transaction_id});
+            // Insert Transaction
+            mysql.pool.query(query_str, values, function(err, result){
+                if(err){
+                    next(err);
+                    return;
                 }
+
+                var get_id_str = `
+                    SELECT max(${type}_id) FROM inex_${type}
+                    WHERE inex_${type}.user_id = ${user_id}
+                `;
+                // GET Transaction ID
+                mysql.pool.query(get_id_str, function(err, result){
+                    var transaction_id = result[0][`max(${type}_id)`];
+
+                    // Insert Cartegories relationships if any
+                    if (categories.length > 0) {
+                        var category_id;
+
+                        var cat_query = `INSERT INTO inex_${type}_category (${type}_id, category_id) VALUES `;
+                        for (var i = 0; i < categories.length; i++) {
+                            category_id = categories[i]
+                            cat_query += `(${transaction_id}, ${category_id}),`
+                        }
+                        cat_query = cat_query.slice(0,-1);
+                        cat_query += ";"
+
+                        mysql.pool.query(cat_query, function(err, result){
+                            res.setHeader('Content-Type', 'application/json');
+                            res.send({
+                                "transaction": transaction_id});
+                        });
+                    } else {
+                        res.setHeader('Content-Type', 'application/json');
+                        res.send({"transaction": transaction_id});
+                    }
+                });
             });
-        });  
+        }
+          
+    });
+
+    app.post('/ajax_delete_transaction', function(req, res, next) {
+
     });
 }
