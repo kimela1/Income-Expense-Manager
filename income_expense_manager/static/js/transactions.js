@@ -34,5 +34,5 @@ window.addEventListener("load", function(e) {
             ttable.add_transaction(o);
         }
     }
-    xhr.send();    
+    xhr.send();
 });

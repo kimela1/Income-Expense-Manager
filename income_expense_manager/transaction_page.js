@@ -115,6 +115,30 @@ module.exports = function(app) {
     });
 
     app.post('/ajax_delete_transaction', function(req, res, next) {
+        var user_id = req.user.user_id;
 
+        if (user_id) {
+            var type = req.body.type,
+                id = req.body.id,
+                id_attr = (type == "inex_income") ? "income_id" : "expense_id";
+
+            // Confirm that type is correct
+            if (type != "inex_income" && type != "inex_expense")
+                res.status(500).send("income was not correct");
+
+            var query_string = `
+                DELETE FROM ${type} WHERE ${id_attr} = ?;
+            `;
+            var values = [id,];
+            // GET Transaction ID
+            mysql.pool.query(query_string, values, function(err, result){
+                if(err){
+                    next(err);
+                    return;
+                }
+                res.setHeader('Content-Type', 'application/json');
+                    res.send({});
+            });
+        }
     });
 }

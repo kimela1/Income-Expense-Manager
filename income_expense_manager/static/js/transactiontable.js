@@ -1,5 +1,6 @@
 class Transaction {
     constructor(id, name, amount, date_string, type, category_ids, categories)  {
+        this.db_id = id;
         this.name = name;
         this.amount = amount;
         this.date_string = date_string,
@@ -122,14 +123,10 @@ class Transaction {
             //Get ID from results
             var id = result[1];
 
-            // Get TR element by the ending ID
-            var tr = document.getElementById("tr-" + id);
-            // Get its parent element (because you have to delete it from the parent element)
-            // It will be <tbody> in this case
-            var parent_element = tr.parentElement;
-            // Remove the row element tr from the tbody element with removeChild
-            parent_element.removeChild(tr);
-        });
+            T.transaction_table.delete_transaction(
+                this.type, this.db_id, id
+            );
+        }.bind(this));
     
         td.append(btn);             
         tr.appendChild(td);
@@ -248,7 +245,28 @@ class Transaction_Table {
 
     }
 
-    delete_transaction() {
+    delete_transaction(type, db_id, element_id) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/ajax_delete_transaction", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        var body = { id: db_id, type:type };
+
+        xhr.onload = function() {
+        }
+        xhr.send(JSON.stringify(body));
         
+        this.num_transactions--;
+
+        // Delete from transaction Dictionary/ Object
+        delete this.transactions[type][db_id];
+
+        // Get TR element by the ending ID
+        var tr = document.getElementById("tr-" + element_id);
+        // Get its parent element (because you have to delete it from the parent element)
+        // It will be <tbody> in this case
+        var parent_element = tr.parentElement;
+        // Remove the row element tr from the tbody element with removeChild
+        parent_element.removeChild(tr);
     }
 }
