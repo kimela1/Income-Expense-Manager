@@ -85,9 +85,9 @@ function categories_search() {
     window.location = '/categories/search/' + encodeURI(search_name)
 }
 
-function delete_categories(id){
+function delete_categories(category_id){
     $.ajax({
-        url: '/categories/' + id,
+        url: '/categories/' + category_id,
         type: 'DELETE',
         success: function(result){
             window.location.reload(true);
