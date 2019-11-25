@@ -25,37 +25,8 @@ class AddTransactionForm {
         );
     }
 
-    set_categories() {
-        let xhr = new XMLHttpRequest();
-        xhr.open("GET", "/get_categories_json", true);
-
-        xhr.onload = function() {
-            if (xhr.status != 200) {
-                alert( 'Error: ' + xhr.status);
-                return;
-            } else {
-                var categories = JSON.parse(xhr.response);
-
-                var select = document.getElementById("categories-select"),
-                    option;
-
-                // Add Categories to Select Menu
-                for (var i = 0; i<categories.length; i++) {
-                    var c = categories[i];
-                    
-                    var id = c.category_id,
-                        name = c.category_name;
-
-                    option = document.createElement("option");
-                    option.innerText = name;
-                    option.setAttribute("value", id);
-                    
-                    select.append(option);
-                }
-            }
-        }
-
-        xhr.send();
+    set_categories() {        
+        T.fill_categories_option("categories-select");
     }
 
     toggle_hide() {

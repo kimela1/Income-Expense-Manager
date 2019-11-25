@@ -178,6 +178,43 @@ module.exports = function(app) {
         }
     });
 
+    app.post('/ajax_set_transaction_category_relationship', function(req, res, next) {
+        var user_id = req.user.user_id;
+        
+        if (user_id) {
+            var category_id = req.body.category_id,
+                type = req.body.type,
+                transaction_id = req.body.transaction_id;
+
+            var type_wo_inex;
+
+
+            // Confirm that type is correct
+            if (type === "inex_income") {
+                type_wo_inex = "income";
+            } else if (type === "inex_expense") {
+                type_wo_inex = "expense";
+            } else {
+                res.status(500).send("Type was not correct");
+            }
+
+            var query_string = `
+                INSERT INTO ${type}_category 
+                    (${type_wo_inex}_id, category_id)
+                    VALUES (?, ?);
+            `;
+            var values = [transaction_id,category_id];
+            mysql.pool.query(query_string, values, function(err, result){
+                if(err){
+                    next(err);
+                    return;
+                }
+                res.setHeader('Content-Type', 'application/json');
+                    res.send({});
+            });
+        }
+    });
+
     app.post('/ajax_update_transaction', function(req, res, next) {
         var user_id = req.user.user_id;
         

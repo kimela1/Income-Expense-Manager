@@ -5,13 +5,13 @@ class Transaction {
         this.amount = parseFloat(amount);
         this.date_string = date_string,
         this.type = type;
-        this.categories = []
-        this.category_ids = []
+        this.categories = [];
+        this.category_ids = [];
+        this.edit_status = false;
+        this.row_id;
         if (categories) {
             this.add_categories(category_ids, categories);
         }
-        this.edit_status = false;
-        this.row_id;
     }
     
     add_categories(category_ids, categories) {
@@ -23,12 +23,16 @@ class Transaction {
         }
 
         if (this.row_id) {
-            var td = document.getElementById("categories-" + this.row_id);
+            if (!this.edit_status) {
+                var td = document.getElementById("categories-" + this.row_id);
             var categories_str = "";
             for(var i = 0; i< this.categories.length; i++) {
                 categories_str += " " + this.categories[i];
             }
             td.textContent = categories_str;
+            } else {
+                this.fill_categories_td();
+            }  
         }
     }
 
@@ -140,8 +144,10 @@ class Transaction {
 
     remove_category(category_id) {
         T.remove_transaction_category_relationship(this.db_id, this.type, category_id);
-        for (var i = 0; i < this.category_ids; i++) {
+        console.log(this);
+        for (var i = 0; i < this.category_ids.length; i++) {
             // Remove From catgories & category_ids Arrays
+            console.log(this.category_ids[i], category_id);
             if (this.category_ids[i] == category_id) {
                 this.category_ids.splice(i,1);
                 this.categories.splice(i,1);
@@ -150,7 +156,9 @@ class Transaction {
         }
     }
 
-    fill_categories_td(categories_td) {
+    fill_categories_td() {
+        var categories_td = document.getElementById("categories-" + this.row_id);
+
         // Remove Children
         while (categories_td.firstChild) {
             categories_td.removeChild(categories_td.firstChild);
@@ -171,7 +179,8 @@ class Transaction {
                 // Remove Category / Transaction Btn / Relationship
                 btn.addEventListener("click", function(e) {
                     var button = e.target;
-                    var category_id = e.target.value;
+                        var category_id = e.target.value;
+                        console.log(this);
 
                     this.remove_category(category_id);
 
@@ -180,12 +189,36 @@ class Transaction {
             }
         }
         
-        // Categories Plus Btn
         btn = document.createElement("button");
         btn.setAttribute("type", "button");
+        btn.setAttribute("data-toggle", "modal");
+        btn.setAttribute("data-target", "#exampleModal");
         btn.classList.add("btn");
         btn.innerText = "➕";
         categories_td.append(btn);
+        btn.addEventListener("click", function(e) {
+            T.fill_categories_relationship(
+                this.db_id,
+                this.type,
+                "trans-categories-relationship-select",
+                this.remove_modal_duplicate_categories.bind(this),
+            );
+        }.bind(this));
+    }
+
+    remove_modal_duplicate_categories() {
+        var categories_obj = {};
+        for(var i = 0; i < this.category_ids.length;i++) {
+            categories_obj[this.category_ids[i]] = true;
+        }
+        var select = document.getElementById("trans-categories-relationship-select");
+        var select_children = select.children;
+        for (var i = 0; i < select_children.length; i++) {
+            if (select_children[i].value in categories_obj) {
+                select.removeChild(select_children[i]);
+                i--;
+            }
+        }
     }
 
     change_edit_form() {
@@ -197,7 +230,6 @@ class Transaction {
             var amount_td       = document.getElementById("amount-" + row_id),
                 name_td         = document.getElementById("name-" + row_id),
                 date_td         = document.getElementById("date-" + row_id),
-                categories_td   = document.getElementById("categories-" + row_id),
                 options_td      = document.getElementById("options-" + row_id);
 
             var amount = parseFloat(amount_td.innerText),
@@ -231,7 +263,7 @@ class Transaction {
             input.required = true;
             date_td.append(input);
 
-            this.fill_categories_td(categories_td);
+            this.fill_categories_td();
 
             var btn = document.createElement("button");
             btn.innerText = "✔️";
@@ -267,7 +299,7 @@ class Transaction {
             options_td.append(btn);
 
             var btn = document.createElement("button");
-            btn.innerText = "❌";
+            btn.innerText = "✖️";
             btn.setAttribute("type", "button");   
 
             btn.setAttribute("id", "delete-" + row_id);
@@ -295,6 +327,9 @@ class Transaction_Table {
             "inex_income": {},
             "inex_expense": {}
         };
+        this.add_transaction_category_relationship;
+
+        this.add_category_relationship_handler();
     }
 
     add_transaction(transaction_object) {
@@ -335,8 +370,8 @@ class Transaction_Table {
         }
     }
 
-    create_edit_transaction_row() {
-
+    set_add_category_relationship_status(transaction_id, type) {
+        this.add_transaction_category_relationship = this.transactions[type][transaction_id];
     }
 
     delete_transaction(type, db_id, element_id) {
@@ -360,5 +395,24 @@ class Transaction_Table {
         var parent_element = tr.parentElement;
         // Remove the row element tr from the tbody element with removeChild
         parent_element.removeChild(tr);
+    }
+
+    add_category_relationship_handler() {
+        var submit_btn = document.getElementById("add-category-relationship-btn");
+        submit_btn.addEventListener("click", function(e) {
+            var category_select = document.getElementById("trans-categories-relationship-select"),
+                category_id = category_select.value,
+                category_name = category_select.options[category_select.selectedIndex].text;
+            
+            var trans = this.add_transaction_category_relationship;
+            T.add_category_relationship(trans.db_id, trans.type, category_id);
+
+            // Renew Categories TD
+            trans.add_categories([category_id,], [category_name,]);
+            
+            // Close Modal Menu
+            var btn = document.getElementById("close-category-modal-btn");
+            btn.click();
+        }.bind(this))
     }
 }

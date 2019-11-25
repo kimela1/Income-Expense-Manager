@@ -39,7 +39,75 @@ var T = {
 
         xhr.onload = function() {}
         xhr.send(JSON.stringify(o));
-    }
+    },
+    get_categories_data(callback) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "/get_categories_json", true);
+
+        xhr.onload = function() {
+            if (xhr.status != 200) {
+                alert( 'Error: ' + xhr.status);
+                return;
+            } else {
+                callback(xhr.response);
+            }
+        }
+
+        xhr.send();
+    },
+    // Fills options into select element.
+    // callback function, if it exists, is used
+    // to remove options, select already known.
+    fill_categories_option(select_id, callback) {
+        function make_categories(xhr_response) {
+            var categories = JSON.parse(xhr_response);
+
+            var select = document.getElementById(select_id),
+                option;
+            // Clear select child
+            while (select.firstChild) {
+                select.removeChild(select.firstChild);
+            }
+
+            // Add Categories to Select Menu
+            for (var i = 0; i<categories.length; i++) {
+                var c = categories[i];
+                
+                var id = c.category_id,
+                    name = c.category_name;
+
+                option = document.createElement("option");
+                option.innerText = name;
+                option.setAttribute("value", id);
+                
+                select.append(option);
+            }
+
+            if (callback)
+                callback();
+        }
+        T.get_categories_data(make_categories);
+    },
+    // Fill select element with categories for modal form to add
+    // relationships to a transaction. Also, flags it with Transaction Table instance
+    fill_categories_relationship(transaction_id, type, options_id, callback) {
+        ttable.set_add_category_relationship_status(transaction_id, type);
+        T.fill_categories_option(options_id, callback);
+    },
+    add_category_relationship(transaction_id, type, category_id) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/ajax_set_transaction_category_relationship", true);
+
+        xhr.setRequestHeader("Content-Type", "application/json");
+        var o = {
+            "type": type,
+            "transaction_id": transaction_id,
+            "category_id": category_id,
+        }
+
+        xhr.onload = function() {}
+        xhr.send(JSON.stringify(o));
+    },
 };
 
 window.addEventListener("load", function(e) {

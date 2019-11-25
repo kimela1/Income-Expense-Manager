@@ -31,38 +31,7 @@
             <th scope="col">Options</th>
         </tr>
     </thead>
-    <tbody id="transactions-tbody">
-        {{!-- <tr>
-            <th scope="row">1</th>
-            <td>+100.00</td>
-            <td>2019-10-16</td>
-            <td>Income</td>
-            <td>
-                <button id="edit-button">📝</button>
-                <button id="delete-button">❌</button>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>-24.36</td>
-            <td>2019-10-20</td>
-            <td>Expense</td>
-            <td>
-                <button id="edit-button">📝</button>
-                <button id="delete-button">❌</button>
-            </td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>+15.00</td>
-            <td>2019-10-21</td>
-            <td>Income</td>
-            <td>
-                <button id="edit-button">📝</button>
-                <button id="delete-button">❌</button>
-            </td>
-        </tr> --}}
-    </tbody>
+    <tbody id="transactions-tbody"></tbody>
 </table>
 
 <form>
@@ -70,6 +39,30 @@
 
     </div>
 </form>
+
+<!-- Modal to Add categories relationship with transactions -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="categories-modal">
+          <div class="form-group">
+            <label for="categories-select" class="col-sm-2">Categories</label>
+            <select class="custom-select" id="trans-categories-relationship-select"></select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="add-category-relationship-btn">Add Category</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-category-modal-btn">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -115,9 +108,6 @@
     <div class="form-group">
         <label for="categories-select" class="col-sm-2">Categories</label>
         <select class="custom-select" id="categories-select" multiple></select>
-    </div>
-    <div class="form-group">
-        <button type="button" class="btn btn-outline-primary btn-sm">➕ Categories</button>
     </div>
     <input type="submit" value="Submit" id="trans-submit">
     <input type="button" value="Cancel" id="trans-cancel">
