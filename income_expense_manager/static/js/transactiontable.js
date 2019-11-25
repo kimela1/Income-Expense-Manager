@@ -10,11 +10,14 @@ class Transaction {
         if (categories) {
             this.add_categories(category_ids, categories);
         }
+        this.edit_status = false;
         this.row_id;
     }
     
     add_categories(category_ids, categories) {
         for(var i = 0; i<categories.length; i++) {
+            if (categories[i] == null)
+                continue;
             this.category_ids.push(category_ids[i]);
             this.categories.push(categories[i]);
         }
@@ -134,25 +137,62 @@ class Transaction {
         return tr;
     }
 
+    fill_categories_td(categories_td) {
+        // Remove Children
+        while (categories_td.firstChild) {
+            categories_td.removeChild(categories_td.firstChild);
+        }
+
+        // Catagories Buttons 
+        var btn;
+        if (this.categories !== undefined && this.categories.length > 0) {
+            for (var i=0; i<this.categories.length; i++) {
+                btn = document.createElement("button");
+                btn.setAttribute("type", "button");
+                btn.classList.add("btn");
+                btn.innerText = this.categories[i] + "❌";
+
+                btn.setAttribute("value", this.category_ids[i]);
+                categories_td.append(btn);
+
+                // Remove Category / Transaction Btn / Relationship
+                btn.addEventListener("click", function(e) {
+                    var button = e.target;
+                    var category_id = e.target.value;
+                    T.remove_transaction_category_relationship(this.db_id, this.type, category_id);
+
+                    button.parentElement.removeChild(button);
+                }.bind(this));
+            }
+        }
+        
+        // Categories Plus Btn
+        btn = document.createElement("button");
+        btn.setAttribute("type", "button");
+        btn.classList.add("btn");
+        btn.innerText = "➕";
+        categories_td.append(btn);
+    }
+
     change_edit_form() {
-        var row_id = this.row_id;
-        var amount_td       = document.getElementById("amount-" + row_id),
-            name_td         = document.getElementById("name-" + row_id),
-            date_td         = document.getElementById("date-" + row_id),
-            type_td         = document.getElementById("type-" + row_id),
-            categories_td   = document.getElementById("categories-" + row_id);
+        if (!this.edit_status) {
+            var row_id = this.row_id;
+            
+            var amount_td       = document.getElementById("amount-" + row_id),
+                name_td         = document.getElementById("name-" + row_id),
+                date_td         = document.getElementById("date-" + row_id),
+                type_td         = document.getElementById("type-" + row_id),
+                categories_td   = document.getElementById("categories-" + row_id);
 
             var amount = parseInt(amount_td.innerText),
                 name = name_td.innerText,
                 date = date_td.innerText,
-                type = type_td.innerText,
-                categories = categories_td.innerText;
+                type = type_td.innerText;
             
             amount_td.innerText = "";
             name_td.innerText = "";
             date_td.innerText = "";
             type_td.innerText = "";
-            categories_td.innerText = "";
 
             var input = document.createElement("input");
             input.setAttribute("type", "number");
@@ -183,19 +223,10 @@ class Transaction {
             input.append(option);
             type_td.append(input);
 
-            // Catagories Section
-            var btn = document.createElement("button");
-            btn.setAttribute("type", "button");
-            btn.classList.add("btn");
-            btn.innerText = categories + "❌";
-            categories_td.append(btn);
-
-            // Categories Plus Btn
-            btn = document.createElement("button");
-            btn.setAttribute("type", "button");
-            btn.classList.add("btn");
-            btn.innerText = "➕";
-            categories_td.append(btn);
+            this.fill_categories_td(categories_td)
+        } else {
+            
+        }
     }
 }
 

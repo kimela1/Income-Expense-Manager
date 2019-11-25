@@ -65,10 +65,16 @@ SET name = :new_name, amount = :new_amount, date_spent = :new_date_spent, catego
 WHERE expense_id = :edit_expense_id;
 
 -- Delete transaction on inex_income
-DELETE FROM inex_income;
+DELETE FROM inex_income where expense_id = :id;
 
 -- Delete transaction on inex_expense
-DELETE FROM inex_expense;
+DELETE FROM inex_expense where expense_id = :id;
+
+-- Delete Inex_Income_Category
+DELETE FROM inex_income_category where income_id = :id and category_id = :id
+
+-- Delete Inex_Expense_category
+DELETE FROM inex_expense_category where expense_id = :id and category_id = :id
 
 -- Search Categories table
 SELECT name from inex_category

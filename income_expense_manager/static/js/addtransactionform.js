@@ -53,7 +53,6 @@ class AddTransactionForm {
                     select.append(option);
                 }
             }
-            
         }
 
         xhr.send();

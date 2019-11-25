@@ -130,7 +130,43 @@ module.exports = function(app) {
                 DELETE FROM ${type} WHERE ${id_attr} = ?;
             `;
             var values = [id,];
-            // GET Transaction ID
+            mysql.pool.query(query_string, values, function(err, result){
+                if(err){
+                    next(err);
+                    return;
+                }
+                res.setHeader('Content-Type', 'application/json');
+                    res.send({});
+            });
+        }
+    });
+
+    app.post('/ajax_remove_transaction_category_relationship', function(req, res, next) {
+        var user_id = req.user.user_id;
+        
+        if (user_id) {
+            var category_id = req.body.category_id,
+                type = req.body.type,
+                transaction_id = req.body.transaction_id;
+
+            var type_wo_inex;
+
+
+            // Confirm that type is correct
+            if (type === "inex_income") {
+                type_wo_inex = "income";
+            } else if (type === "inex_expense") {
+                type_wo_inex = "expense";
+            } else {
+                res.status(500).send("Type was not correct");
+            }
+
+            var query_string = `
+                DELETE FROM ${type}_category 
+                    WHERE ${type_wo_inex}_id = ? 
+                    AND category_id = ?;
+            `;
+            var values = [transaction_id,category_id];
             mysql.pool.query(query_string, values, function(err, result){
                 if(err){
                     next(err);

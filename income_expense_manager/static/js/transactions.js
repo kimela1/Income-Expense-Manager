@@ -9,6 +9,20 @@ var T = {
         this.transaction_table = ttable = new Transaction_Table("transactions-tbody");
         this.add_transaction_form = addtransform = new AddTransactionForm();
     },
+    remove_transaction_category_relationship(transaction_id, type, category_id) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/ajax_remove_transaction_category_relationship", true);
+
+        xhr.setRequestHeader("Content-Type", "application/json");
+        var o = { 
+            "type": type,
+            "transaction_id": transaction_id,
+            "category_id": category_id,
+        }
+
+        xhr.onload = function() {}
+        xhr.send(JSON.stringify(o));
+    }
 };
 
 window.addEventListener("load", function(e) {
