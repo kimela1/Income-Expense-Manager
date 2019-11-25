@@ -86,6 +86,7 @@ class Transaction {
 
         // Option buttons
         td = document.createElement("td");
+        td.setAttribute("id", "options-" + row_id);
 
         // EDIT BUTTON
         btn = document.createElement("button");
@@ -137,6 +138,18 @@ class Transaction {
         return tr;
     }
 
+    remove_category(category_id) {
+        T.remove_transaction_category_relationship(this.db_id, this.type, category_id);
+        for (var i = 0; i < this.category_ids; i++) {
+            // Remove From catgories & category_ids Arrays
+            if (this.category_ids[i] == category_id) {
+                this.category_ids.splice(i,1);
+                this.categories.splice(i,1);
+                break;
+            }
+        }
+    }
+
     fill_categories_td(categories_td) {
         // Remove Children
         while (categories_td.firstChild) {
@@ -159,7 +172,8 @@ class Transaction {
                 btn.addEventListener("click", function(e) {
                     var button = e.target;
                     var category_id = e.target.value;
-                    T.remove_transaction_category_relationship(this.db_id, this.type, category_id);
+
+                    this.remove_category(category_id);
 
                     button.parentElement.removeChild(button);
                 }.bind(this));
@@ -175,64 +189,71 @@ class Transaction {
     }
 
     change_edit_form() {
+        var row_id = this.row_id;
+
         if (!this.edit_status) {
-            var row_id = this.row_id;
+            this.edit_status = true;
             
             var amount_td       = document.getElementById("amount-" + row_id),
                 name_td         = document.getElementById("name-" + row_id),
                 date_td         = document.getElementById("date-" + row_id),
-                type_td         = document.getElementById("type-" + row_id),
-                categories_td   = document.getElementById("categories-" + row_id);
+                categories_td   = document.getElementById("categories-" + row_id),
+                options_td      = document.getElementById("options-" + row_id);
 
-            var amount = parseInt(amount_td.innerText),
-                name = name_td.innerText,
-                date = date_td.innerText,
-                type = type_td.innerText;
+            var amount = parseFloat(amount_td.innerText),
+                name = name_td.innerText;
             
-            amount_td.innerText = "";
-            name_td.innerText = "";
-            date_td.innerText = "";
-            type_td.innerText = "";
+            amount_td.innerHTML = "";
+            name_td.innerHTML = "";
+            date_td.innerHTML = "";
+            options_td.innerHTML = "";
 
             var input = document.createElement("input");
             input.setAttribute("type", "number");
             input.value = amount;
+            input.required = true;
             amount_td.append(input);
 
             
             input = document.createElement("input");
             input.setAttribute("type", "text");
             input.value = name;
+            input.required = true;
             name_td.append(input);
 
+            
             input = document.createElement("input");
             input.setAttribute("type", "date");
-            input.value = date;
+            input.setAttribute("value", this.date_string);
+            input.required = true;
             date_td.append(input);
 
-            input = document.createElement("select");
-            var option = document.createElement("option");
-            option.innerText = "Income";
-            input.append(option);
-            if (type == "Income")
-                option.setAttribute("selected", "True")
-            option = document.createElement("option");
-            option.innerText = "Expense";
-            if (type == "Expense")
-                option.setAttribute("selected", "True");
-            input.append(option);
-            type_td.append(input);
+            this.fill_categories_td(categories_td);
 
-            this.fill_categories_td(categories_td)
+            var btn = document.createElement("button");
+            btn.innerText = "❌";
+            btn.setAttribute("type", "button");   
+
+            btn.setAttribute("id", "delete-" + row_id);
+            btn.addEventListener("click", function(e) {
+                this.change_edit_form();
+            }.bind(this));
+        
+            options_td.append(btn);  
         } else {
-            
+            this.edit_status = false;
+            var old_tr = document.getElementById("tr-" + row_id),
+                new_tr = this.get_tr(row_id);
+            old_tr.parentNode.replaceChild(new_tr, old_tr);
         }
     }
 }
 
 class Transaction_Table {
     constructor(tbody_id) {
-        this.num_transactions = 0;
+        // Transaction Counter, Used for ROW_ID
+        // Only Increment
+        this.transaction_counter = 0;
         this.tbody_id = tbody_id;
         this.transactions = {
             "inex_income": {},
@@ -252,13 +273,19 @@ class Transaction_Table {
         if (this.transactions[type][id]) {
             this.transactions[type][id].add_categories(category_ids, categories)
         } else {
-            this.num_transactions++;
+            this.transaction_counter++;
+
+            var date_string = transaction_object["date_string"],
+                re = /(\d{4}-\d{2}-\d{2})/;
+
+            // Convert Date to yyyy-mm-dd
+            var con_date_string = date_string.match(re)[1];
 
             var t = new Transaction(
                 id, 
                 transaction_object["name"], 
                 transaction_object["amount"], 
-                transaction_object["date_string"], 
+                con_date_string, 
                 type,
                 category_ids,
                 categories,
@@ -266,7 +293,7 @@ class Transaction_Table {
 
             this.transactions[type][id] = t;
     
-            var tr = t.get_tr(this.num_transactions);
+            var tr = t.get_tr(this.transaction_counter);
     
             tbody.append(tr);
         }
@@ -286,8 +313,6 @@ class Transaction_Table {
         xhr.onload = function() {
         }
         xhr.send(JSON.stringify(body));
-        
-        this.num_transactions--;
 
         // Delete from transaction Dictionary/ Object
         delete this.transactions[type][db_id];

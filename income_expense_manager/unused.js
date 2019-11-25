@@ -34,3 +34,16 @@ function decrypt(text){
 //       });
     
 // });
+
+// input = document.createElement("select");
+            // var option = document.createElement("option");
+            // option.innerText = "Income";
+            // input.append(option);
+            // if (type == "Income")
+            //     option.setAttribute("selected", "True")
+            // option = document.createElement("option");
+            // option.innerText = "Expense";
+            // if (type == "Expense")
+            //     option.setAttribute("selected", "True");
+            // input.append(option);
+            // type_td.append(input);
