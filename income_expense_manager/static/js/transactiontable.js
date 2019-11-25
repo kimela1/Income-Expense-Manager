@@ -2,7 +2,7 @@ class Transaction {
     constructor(id, name, amount, date_string, type, category_ids, categories)  {
         this.db_id = id;
         this.name = name;
-        this.amount = amount;
+        this.amount = parseFloat(amount);
         this.date_string = date_string,
         this.type = type;
         this.categories = []
@@ -210,6 +210,7 @@ class Transaction {
 
             var input = document.createElement("input");
             input.setAttribute("type", "number");
+            input.setAttribute("id", "edit-amount-input-" + row_id);
             input.value = amount;
             input.required = true;
             amount_td.append(input);
@@ -217,6 +218,7 @@ class Transaction {
             
             input = document.createElement("input");
             input.setAttribute("type", "text");
+            input.setAttribute("id", "edit-name-input-" + row_id);
             input.value = name;
             input.required = true;
             name_td.append(input);
@@ -225,10 +227,44 @@ class Transaction {
             input = document.createElement("input");
             input.setAttribute("type", "date");
             input.setAttribute("value", this.date_string);
+            input.setAttribute("id", "edit-date-input-" + row_id);
             input.required = true;
             date_td.append(input);
 
             this.fill_categories_td(categories_td);
+
+            var btn = document.createElement("button");
+            btn.innerText = "✔️";
+            btn.setAttribute("type", "button");   
+
+            btn.setAttribute("id", "submit-edit-" + row_id);
+            btn.addEventListener("click", function(e) {
+                var row_id = this.row_id;
+                var name = document.getElementById("edit-name-input-" + row_id).value,
+                    date = document.getElementById("edit-date-input-" + row_id).value,
+                    amount = parseFloat(document.getElementById("edit-amount-input-" + row_id).value);
+
+                if (name.length >0 && date && amount) {
+                    var o = {
+                        name: name,
+                        date: date,
+                        amount: amount
+                    };
+                    T.update_transaction(this.db_id, this.type, o);
+    
+                    this.name = name;
+                    this.date_string = date;
+                    this.amount = amount;
+    
+                    // Revert Edit Form
+                    this.change_edit_form();
+                } else {
+                    window.alert("One of the input values was entered incorrectly");
+                }
+                
+            }.bind(this));
+        
+            options_td.append(btn);
 
             var btn = document.createElement("button");
             btn.innerText = "❌";

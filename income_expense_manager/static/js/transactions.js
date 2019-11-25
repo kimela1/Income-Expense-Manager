@@ -22,6 +22,23 @@ var T = {
 
         xhr.onload = function() {}
         xhr.send(JSON.stringify(o));
+    },
+    // edit_obj = includes name, amount, date
+    update_transaction(transaction_id, type, edit_obj) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/ajax_update_transaction", true);
+
+        xhr.setRequestHeader("Content-Type", "application/json");
+        var o = {
+            "type": type,
+            "transaction_id": transaction_id,
+            "name": edit_obj["name"],
+            "date": edit_obj["date"],
+            "amount": edit_obj["amount"],
+        }
+
+        xhr.onload = function() {}
+        xhr.send(JSON.stringify(o));
     }
 };
 

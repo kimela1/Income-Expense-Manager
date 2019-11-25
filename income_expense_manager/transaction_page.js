@@ -177,4 +177,48 @@ module.exports = function(app) {
             });
         }
     });
+
+    app.post('/ajax_update_transaction', function(req, res, next) {
+        var user_id = req.user.user_id;
+        
+        if (user_id) {
+            var type = req.body.type,
+                transaction_id = req.body.transaction_id,
+                name = req.body.name,
+                date = req.body.date,
+                amount = req.body.amount;
+
+            var type_wo_inex,
+                date_parameter;
+
+            // Confirm that type is correct
+            if (type === "inex_income") {
+                type_wo_inex = "income";
+                date_parameter = 'date_received';
+            } else if (type === "inex_expense") {
+                type_wo_inex = "expense";
+                date_parameter = 'date_spent';
+            } else {
+                res.status(500).send("Type was not correct");
+            }
+
+            var query_string = `
+                UPDATE ${type}
+                    SET 
+                        ${type_wo_inex}_name = ?,
+                        ${date_parameter} = ?,
+                        amount = ?
+                    where ${type_wo_inex}_id = ?;
+            `;
+            var values = [name, date, amount, transaction_id];
+            mysql.pool.query(query_string, values, function(err, result){
+                if(err){
+                    next(err);
+                    return;
+                }
+                res.setHeader('Content-Type', 'application/json');
+                    res.send({});
+            });
+        }
+    });
 }
