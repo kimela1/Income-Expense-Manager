@@ -78,16 +78,29 @@ var categories_table = {
 }; 
 */
 
+/*
 function categories_search() {
     // Get name 
     var search_name = document.getElementById('search_name').value
     // Redirect to URL
     window.location = '/categories/search/' + encodeURI(search_name)
-}
+}*/
 
-function delete_categories(id){
+function edit_categories(category_id){
     $.ajax({
-        url: '/categories/' + id,
+        url: '/update_categories/' + category_id,
+        type: 'POST',
+        data: $('#update_categories').serialize(),
+        success: function(result){
+            // Redirect to URL
+            window.location = '/categories';
+        }
+    })
+};
+
+function delete_categories(category_id){
+    $.ajax({
+        url: '/categories/' + category_id,
         type: 'DELETE',
         success: function(result){
             window.location.reload(true);

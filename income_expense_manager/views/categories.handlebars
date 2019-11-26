@@ -5,7 +5,7 @@
 <!-- Search box -->
 <form id="search-categories" class="form-inline" action="" method="">
     <label for="search" class="sr-only">Search by category name</label>
-    <input type="text" class="form-control" id="search_name" placeholder="Search by name" required>
+    <input type="text" class="form-control" id="search_name" placeholder="Search by name">
     <button type="submit" class="btn" id="search-submit" onclick="categories_search()">Search</button><br><br>
 </form>
 
@@ -28,8 +28,8 @@
         <tr> 
             <td>{{category_name}}</td> 
             <td>
-                <button onclick="update_categories({{id}})">📝</button>
-                <button onclick="delete_categories({{id}})">❌</button>
+                <button><a href="/update_categories/{{category_id}}">📝</a></button>
+                <button onclick="delete_categories({{category_id}})">❌</button>
             </td>
         </tr> 
         {{/each}} 
