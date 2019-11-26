@@ -46,7 +46,7 @@ module.exports = function(app) {
     // Show update category form
     app.get('/update_categories/:category_id', check_user, function(req, res) {
         var sql = `SELECT category_id, category_name FROM inex_category WHERE category_id = ?`;
-        var inserts = [req.body.category_name, req.params.category_id];
+        var inserts = [req.params.category_id];
 
         mysql.pool.query(sql, inserts, function(error, result){
             if(error){
@@ -54,35 +54,35 @@ module.exports = function(app) {
                 return;
             }
 
-            var context = {};
-            context.jsscripts = ["categories.js"];
+            var context = {category_id: req.params.category_id,
+                        category_name: result[0]["category_name"]};
+            //context.jsscripts = ["categories.js"];
             res.render('update_categories', context)
         });
     });
 
     // Update a category
-    app.put('/update_categories/:category_id', check_user, function(req, res) {
+    app.post('/update_categories/:category_id', check_user, function(req, res) {
         console.log(req.body)
         console.log(req.params.category_id)
 
-        var sql = "UPDATE inex_category SET category_name = ?, WHERE category_id = ?";
+        var sql = "UPDATE inex_category SET category_name = ? WHERE category_id = ?";
         var inserts = [req.body.category_name, req.params.category_id];
 
-        sql = mysql.pool.query(sql,inserts,function(error, results, fields){
+        sql = mysql.pool.query(sql, inserts, function(error, results, fields){
             if(error){
                 console.log(error)
                 res.write(JSON.stringify(error));
                 res.end();
             }
             else{
-                res.status(200);
-                res.end();
+                res.redirect('/categories');
             }
         });
     });
 
     // Delete a category
-    app.delete('/:category_id', check_user, function(req, res){
+    app.delete('/categories/:category_id', check_user, function(req, res){
         var sql = "DELETE FROM inex_category WHERE category_id = ?";
         var inserts = [req.params.category_id];
         sql = mysql.pool.query(sql, inserts, function(error, results, fields){

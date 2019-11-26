@@ -89,7 +89,7 @@ function categories_search() {
 function edit_categories(category_id){
     $.ajax({
         url: '/update_categories/' + category_id,
-        type: 'PUT',
+        type: 'POST',
         data: $('#update_categories').serialize(),
         success: function(result){
             // Redirect to URL
