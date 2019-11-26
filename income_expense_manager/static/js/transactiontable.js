@@ -327,7 +327,7 @@ class Transaction_Table {
             "inex_income": {},
             "inex_expense": {}
         };
-        this.add_transaction_category_relationship;
+        this.add_transaction_category_relationship = null;
 
         this.add_category_relationship_handler();
     }
@@ -346,7 +346,7 @@ class Transaction_Table {
         } else {
             this.transaction_counter++;
 
-            var date_string = transaction_object["date_string"],
+            var date_string = transaction_object["date"],
                 re = /(\d{4}-\d{2}-\d{2})/;
 
             // Convert Date to yyyy-mm-dd

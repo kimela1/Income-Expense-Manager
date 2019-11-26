@@ -126,7 +126,7 @@ window.addEventListener("load", function(e) {
                 name: t["name"],
                 category_name: t["category_name"],
                 category_id: t["category_id"],
-                date_string: t["date"],
+                date: t["date"],
                 amount: t["amount"],
                 id: t["id"]
             }
