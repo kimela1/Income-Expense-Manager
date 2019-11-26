@@ -11,7 +11,7 @@
 
 <!-- Add to categories-->
 <form id="add-categories" action="/add_categories" method="post" class="form-inline" >
-    <input type="text" name="category_name" placeholder="Enter new category name" class="form-control">
+    <input type="text" name="category_name" placeholder="Enter new category name" class="form-control" required>
     <button type="submit" class="btn" id="add-submit">➕ Category</button><br><br>
 </form>
 
@@ -28,7 +28,7 @@
         <tr> 
             <td>{{category_name}}</td> 
             <td>
-                <button onclick="update_categories({{category_id}})">📝</button>
+                <button><a href="/update_categories/{{category_id}}">📝</a></button>
                 <button onclick="delete_categories({{category_id}})">❌</button>
             </td>
         </tr> 
