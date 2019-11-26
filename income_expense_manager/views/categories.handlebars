@@ -5,13 +5,13 @@
 <!-- Search box -->
 <form id="search-categories" class="form-inline" action="" method="">
     <label for="search" class="sr-only">Search by category name</label>
-    <input type="text" class="form-control" id="search_name" placeholder="Search by name">
+    <input type="text" class="form-control" id="search_name" placeholder="Search by name" required>
     <button type="submit" class="btn" id="search-submit" onclick="categories_search()">Search</button><br><br>
 </form>
 
 <!-- Add to categories-->
 <form id="add-categories" action="/add_categories" method="post" class="form-inline" >
-    <input type="text" name="category_name" placeholder="Enter new category name" class="form-control">
+    <input type="text" name="category_name" placeholder="Enter new category name" class="form-control" required>
     <button type="submit" class="btn" id="add-submit">➕ Category</button><br><br>
 </form>
 
