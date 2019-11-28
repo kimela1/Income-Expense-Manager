@@ -1,6 +1,4 @@
 module.exports = function(app) {
-    var mysql = require('./localdb.js');
-
     function check_user(req, res, next) {
         if (req.user) {
             next();
@@ -11,6 +9,7 @@ module.exports = function(app) {
 
     // Display all categories
     app.get('/categories', check_user, function(req, res, next) {
+        var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
         var query_str = `SELECT category_id, category_name 
         FROM inex_category WHERE inex_category.user_id = ${user_id}`;
@@ -27,6 +26,7 @@ module.exports = function(app) {
 
     // Add a category 
     app.post('/add_categories', check_user, function(req, res){
+        var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
         var sql = "INSERT INTO inex_category (category_name, user_id) VALUES (?, ?)";
         var inserts = [req.body.category_name, user_id];
@@ -45,6 +45,7 @@ module.exports = function(app) {
 
     // Show update category form
     app.get('/update_categories/:category_id', check_user, function(req, res) {
+        var mysql = req.app.get('mysql');
         var sql = `SELECT category_id, category_name FROM inex_category WHERE category_id = ?`;
         var inserts = [req.params.category_id];
 
@@ -63,6 +64,7 @@ module.exports = function(app) {
 
     // Update a category
     app.post('/update_categories/:category_id', check_user, function(req, res) {
+        var mysql = req.app.get('mysql');
         console.log(req.body)
         console.log(req.params.category_id)
 
@@ -83,6 +85,7 @@ module.exports = function(app) {
 
     // Delete a category
     app.delete('/categories/:category_id', check_user, function(req, res){
+        var mysql = req.app.get('mysql');
         var sql = "DELETE FROM inex_category WHERE category_id = ?";
         var inserts = [req.params.category_id];
         sql = mysql.pool.query(sql, inserts, function(error, results, fields){

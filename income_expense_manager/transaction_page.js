@@ -1,7 +1,6 @@
 module.exports = function(app) {
-    var mysql = require('./localdb.js');
-
     app.get('/get_categories_json', function(req, res, next) {
+        var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
         var query_str = `SELECT  category_id, category_name 
             FROM inex_category WHERE inex_category.user_id = ${user_id}`;
@@ -16,6 +15,7 @@ module.exports = function(app) {
     });
 
     app.get('/get_transactions_json', function(req, res, next) {
+        var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
         var query_str = `SELECT  *
             FROM 
@@ -50,6 +50,7 @@ module.exports = function(app) {
     });
 
     app.post('/ajax-add-transaction', function(req, res, next) {
+        var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
 
         if (user_id) {
@@ -115,6 +116,7 @@ module.exports = function(app) {
     });
 
     app.post('/ajax_delete_transaction', function(req, res, next) {
+        var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
 
         if (user_id) {
@@ -142,6 +144,7 @@ module.exports = function(app) {
     });
 
     app.post('/ajax_remove_transaction_category_relationship', function(req, res, next) {
+        var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
         
         if (user_id) {
@@ -179,6 +182,7 @@ module.exports = function(app) {
     });
 
     app.post('/ajax_set_transaction_category_relationship', function(req, res, next) {
+        var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
         
         if (user_id) {
@@ -216,6 +220,7 @@ module.exports = function(app) {
     });
 
     app.post('/ajax_update_transaction', function(req, res, next) {
+        var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
         
         if (user_id) {

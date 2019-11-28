@@ -62,6 +62,7 @@ app.use(bodyParser.json());
 
 app.engine('handlebars', exphbs());
 
+app.set('mysql', mysql);
 app.set('view engine', 'handlebars');
 app.set('port', 54247);
 
