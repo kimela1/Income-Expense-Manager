@@ -4,32 +4,9 @@ var ttable,
 var T = {
     transaction_table: null,
     add_transaction_form: null,
-    start_date: null,
-    end_date: null,
-    month_time_span: 6,
-    set_dates() {
-        var start_date = document.getElementById("start-date-input"),
-            end_date = document.getElementById("end-date-input");
-
-        var end = new Date(),
-            start = new Date();
-        
-        end.setMonth(end.getMonth() + 1);
-        end.setDate(-1);
-        end_date.valueAsDate = end;
-
-        start.setMonth(start.getMonth() - this.month_time_span);
-        start.setDate(0);
-        start_date.valueAsDate = start;
-
-        console.log(start_date, end_date);
-
-    },
-
     start: function() {
         this.transaction_table = ttable = new Transaction_Table("transactions-tbody");
         this.add_transaction_form = addtransform = new AddTransactionForm();
-        this.set_dates();
     },
     remove_transaction_category_relationship(transaction_id, type, category_id) {
         let xhr = new XMLHttpRequest();
@@ -130,30 +107,85 @@ var T = {
         xhr.onload = function() {}
         xhr.send(JSON.stringify(o));
     },
+
+    load_transactions_to_table() {
+        T.transaction_table.clear_table();
+        var search_data = T.transaction_table.get_search_data();
+
+        var url = "/get_transactions_json/?";
+        url += "start_date=" + search_data["start_date"];
+        url += "&end_date=" + search_data["end_date"];
+
+        if ( search_data.search_term && search_data.search_term.length > 0) {
+            url += "&search_option=" + search_data["search_option"];
+            url += "&search_term=" + search_data["search_term"];
+        }
+
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+
+        xhr.onload = function() {
+            var transactions = JSON.parse(xhr.response);
+            // Add Data to Transactions Table
+            for (var i = 0; i<transactions.length; i++) {
+                var t = transactions[i];
+                var o = {
+                    type: t["type"],
+                    name: t["name"],
+                    category_name: t["category_name"],
+                    category_id: t["category_id"],
+                    date: t["date"],
+                    amount: t["amount"],
+                    id: t["id"]
+                }
+                ttable.add_transaction(o);
+            }
+        }
+        xhr.send();
+    },
+    search_transactions() {
+        T.transaction_table.clear_table();
+        var search_data = T.transaction_table.get_search_data();
+
+        var start_url = "/get_transactions_json/?";
+        var append_url = "";
+
+        append_url += "start_date=" + search_data["start_date"];
+        append_url += "&end_date=" + search_data["end_date"];
+
+        if ( search_data.search_term && search_data.search_term.length > 0) {
+            if (search_data["search_option"] == "category") {
+                start_url = "/transactions_by_category_name_json/?";
+            }
+
+            append_url += "&search_option=" + search_data["search_option"];
+            append_url += "&search_term=" + search_data["search_term"];
+        }
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", start_url + append_url, true);
+
+        xhr.onload = function() {
+            var transactions = JSON.parse(xhr.response);
+            // Add Data to Transactions Table
+            for (var i = 0; i<transactions.length; i++) {
+                var t = transactions[i];
+                var o = {
+                    type: t["type"],
+                    name: t["name"],
+                    category_name: t["category_name"],
+                    category_id: t["category_id"],
+                    date: t["date"],
+                    amount: t["amount"],
+                    id: t["id"]
+                }
+                ttable.add_transaction(o);
+            }
+        }
+        xhr.send();
+    }
 };
 
 window.addEventListener("load", function(e) {
     T.start();
-    
-    let xhr = new XMLHttpRequest();
-    xhr.open("GET", "/get_transactions_json", true);
-
-    xhr.onload = function() {
-        var transactions = JSON.parse(xhr.response);
-        // Add Data to Transactions Table
-        for (var i = 0; i<transactions.length; i++) {
-            var t = transactions[i];
-            var o = {
-                type: t["type"],
-                name: t["name"],
-                category_name: t["category_name"],
-                category_id: t["category_id"],
-                date: t["date"],
-                amount: t["amount"],
-                id: t["id"]
-            }
-            ttable.add_transaction(o);
-        }
-    }
-    xhr.send();
+    T.load_transactions_to_table();
 });

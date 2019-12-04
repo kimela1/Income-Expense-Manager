@@ -11,6 +11,17 @@ class Transaction_Table {
         this.add_transaction_category_relationship = null;
 
         this.add_category_relationship_handler();
+        this.month_time_span = 6;
+        this.set_date_range_inputs();
+        this.add_search_submit_handler();
+    }
+
+    add_search_submit_handler() {
+        var form = document.getElementById("search-form");
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+            T.search_transactions();
+        })
     }
 
     add_transaction(transaction_object) {
@@ -95,5 +106,76 @@ class Transaction_Table {
             var btn = document.getElementById("close-category-modal-btn");
             btn.click();
         }.bind(this))
+    }
+
+    set_date_range_inputs() {
+        var start_date = document.getElementById("start-date-input"),
+            end_date = document.getElementById("end-date-input");
+
+        var end = new Date(),
+            start = new Date();
+        
+        end.setMonth(end.getMonth() + 1);
+        end.setDate(-1);
+        end_date.valueAsDate = end;
+        
+        start.setMonth(start.getMonth() - this.month_time_span);
+        start.setDate(0);
+        start_date.valueAsDate = start;
+    }
+
+    // Sets date inputs to default date if values are undefined.
+    get_search_data() {
+        var start_date = document.getElementById("start-date-input").value,
+            end_date = document.getElementById("end-date-input").value;
+
+        // if Dates were blank for some reason, set it default 6 months of present
+        if (!end_date || !start_date) {
+            this.set_date_range_inputs();
+            start_date = document.getElementById("start-date-input").value,
+            end_date = document.getElementById("end-date-input").value;
+        }
+
+        // If start_date is later than end_date
+        if (start_date > end_date) {
+            var temp = start_date;
+            start_date = end_date;
+            end_date = temp;
+        }
+
+        // Get Search term if it exists
+        var option = document.getElementById("search-select").value,
+            search_term = document.getElementById("search-term-input").value;
+        
+        switch(option) {
+            case "1": option = "name"; break;
+            case "2": option = "category"; break;
+            default: search_term = "";
+        }
+
+        return {
+            start_date: start_date,
+            end_date: end_date,
+            search_term: search_term,
+            search_option: option,
+        }
+    }
+
+    clear_table() {
+        var income = this.transactions.inex_income,
+            expense = this.transactions.inex_expense;
+
+        for (var member in income) delete income[member];
+        for (var member in expense) delete expense[member];
+
+        this.transactions = {
+            "inex_income": {},
+            "inex_expense": {}
+        };
+
+        var tbody = document.getElementById(this.tbody_id);
+        while (tbody.firstChild){
+            tbody.removeChild(tbody.firstChild);
+        }
     }
 }

@@ -26,21 +26,40 @@ FROM
         ) transactions;
 
 -- Get inex_income and inex_expense in one transaction table along with the categories name
-SELECT  * 
-FROM 
-        (
-            SELECT 'inex_income' as table_name, i.name, i.income_id as id, i.amount, i.date_received as date, c.name as category_name 
-            FROM inex_income as i
-		inner join inex_user as u on i.user_id = u.user_id and u.user_id = :user_id
-    		left join inex_income_category as ic on ic.income_id = i.income_id 
-    		left join inex_category as c on c.category_id = ic.category_id
-            UNION ALL
-            SELECT 'inex_expense' as table_name, e.name, e.expense_id as id, e.amount, e.date_spent as date, c.name as category_name
-            FROM inex_expense as e
-		inner join inex_user as u on e.user_id = u.user_id and u.user_id = :user_id
-		    left join inex_expense_category as ec on ec.expense_id = e.expense_id 
-		    left join inex_category as c on c.category_id = ec.category_id
-        ) transactions;
+    SELECT 'inex_income' as table_name, i.name, i.income_id as id, i.amount, i.date_received as date, c.name as category_name 
+    FROM inex_income as i
+inner join inex_user as u on i.user_id = u.user_id and u.user_id = :user_id
+    left join inex_income_category as ic on ic.income_id = i.income_id 
+    left join inex_category as c on c.category_id = ic.category_id
+    UNION ALL
+    SELECT 'inex_expense' as table_name, e.name, e.expense_id as id, e.amount, e.date_spent as date, c.name as category_name
+    FROM inex_expense as e
+inner join inex_user as u on e.user_id = u.user_id and u.user_id = :user_id
+    left join inex_expense_category as ec on ec.expense_id = e.expense_id 
+    left join inex_category as c on c.category_id = ec.category_id
+
+-- Get inex income & inex_expense into one table along with categories
+-- Filter by date & name
+SELECT 'inex_income' as type, i.income_name as name, 
+    i.income_id as id, i.amount, i.date_received as date, 
+    c.category_name as category_name,
+    c.category_id as category_id
+FROM inex_income as i
+inner join inex_user as u on i.user_id = u.user_id AND u.user_id = ${user_id}
+left join inex_income_category as ic ON ic.income_id = i.income_id
+left join inex_category as c ON c.category_id = ic.category_id
+WHERE (i.date_received >= ? AND i.date_received <= ? i.income_name = ?)
+UNION ALL
+SELECT 'inex_expense' as type, e.expense_name as name, 
+    e.expense_id as id, e.amount, 
+    e.date_spent as date, 
+    c.category_name as category_name,
+    c.category_id as category_id
+FROM inex_expense as e
+inner join inex_user as u on e.user_id = u.user_id AND u.user_id = ${user_id}
+left join inex_expense_category as ec ON ec.expense_id = e.expense_id
+left join inex_category as c on c.category_id = ec.category_id
+WHERE (e.date_spent >= ? AND e.date_spent <= ? e.expense_name = ?);
 
 -- Create new account
 INSERT INTO inex_user (first_name, last_name, username, password, email)
@@ -117,3 +136,35 @@ select e.name, e.date_spent, e.amount, c.name as "category_name" from inex_expen
 
 -- Get Categories With User_id
 SELECT  SELECT  category_id, category_name FROM category WHERE category.user_id = :user_id;
+
+-- Filter items by categories and use that query to building item-category
+SELECT 'inex_income' as type, i.income_name as name, 
+    i.income_id as id, i.amount, i.date_received as date, 
+    c.category_name as category_name,
+    c.category_id as category_id
+    FROM 
+        (SELECT i.income_id, i.income_name, i.amount, i.date_received, i.user_id
+            FROM inex_category AS c
+            INNER JOIN inex_income_category AS ic ON ic.category_id = c.category_id
+            INNER JOIN inex_income AS i on i.income_id = ic.income_id
+            WHERE c.category_name = :category_name)as i
+    inner join inex_user as u on i.user_id = u.user_id and u.user_id = :user_id
+    left join inex_income_category as ic on ic.income_id = i.income_id
+    left join inex_category as c on c.category_id = ic.category_id
+    WHERE (i.date_received >= :date AND i.date_received <= :date)
+UNION ALL
+SELECT 'inex_expense' as type, e.expense_name as name, 
+    e.expense_id as id, e.amount, 
+    e.date_spent as date, 
+    c.category_name as category_name,
+    c.category_id as category_id
+    FROM 
+        (SELECT e.expense_id, e.expense_name, e.amount, e.date_spent, e.user_id
+            FROM inex_category AS c
+            INNER JOIN inex_expense_category AS ec ON ec.category_id = c.category_id
+            INNER JOIN inex_expense AS e on e.expense_id = ec.expense_id
+            WHERE c.category_name = :category_name) as e
+    inner join inex_user as u on e.user_id = u.user_id and u.user_id = :user_id
+    left join inex_expense_category as ec on ec.expense_id = e.expense_id
+    left join inex_category as c on c.category_id = ec.category_id
+    WHERE (e.date_spent >= :date AND e.date_spent <= :date)

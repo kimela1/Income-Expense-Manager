@@ -17,29 +17,105 @@ module.exports = function(app) {
     app.get('/get_transactions_json', function(req, res, next) {
         var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
-        var query_str = `SELECT  *
-            FROM 
-                (
-                    SELECT 'inex_income' as type, i.income_name as name, 
-                        i.income_id as id, i.amount, i.date_received as date, 
-                        c.category_name as category_name,
-                        c.category_id as category_id
-                    FROM inex_income as i
+
+        var start_date = req.query.start_date,
+            end_date = req.query.end_date;
+
+        var search_term = req.query.search_term,
+            search_option = req.query.search_option;
+
+        var income_search_query = "",
+            expense_search_query = "";
+        var insert = [start_date, end_date, start_date, end_date];
+
+        if (search_term && search_option 
+            && search_term.length > 0 && search_option == "name") {
+            income_search_query = "AND i.income_name = ?"
+            expense_search_query = "AND e.expense_name = ?"
+
+            insert = [start_date, end_date, search_term, 
+                start_date, end_date, search_term];
+        }
+
+        var query_str = `
+            SELECT 'inex_income' as type, i.income_name as name, 
+                i.income_id as id, i.amount, i.date_received as date, 
+                c.category_name as category_name,
+                c.category_id as category_id
+            FROM inex_income as i
+            inner join inex_user as u on i.user_id = u.user_id AND u.user_id = ${user_id}
+            left join inex_income_category as ic ON ic.income_id = i.income_id
+            left join inex_category as c ON c.category_id = ic.category_id
+            WHERE (i.date_received >= ? AND i.date_received <= ? ${income_search_query})
+            UNION ALL
+            SELECT 'inex_expense' as type, e.expense_name as name, 
+                e.expense_id as id, e.amount, 
+                e.date_spent as date, 
+                c.category_name as category_name,
+                c.category_id as category_id
+            FROM inex_expense as e
+            inner join inex_user as u on e.user_id = u.user_id AND u.user_id = ${user_id}
+            left join inex_expense_category as ec ON ec.expense_id = e.expense_id
+            left join inex_category as c on c.category_id = ec.category_id
+            WHERE (e.date_spent >= ? AND e.date_spent <= ? ${expense_search_query});`;
+        
+
+        mysql.pool.query(query_str, insert, function(err, result){
+            if(err){
+                next(err);
+                return;
+            }
+            res.setHeader('Content-Type', 'application/json');
+            res.send(result);
+        });
+    });
+
+    app.get('/transactions_by_category_name_json', function(req, res, next) {
+        var mysql = req.app.get('mysql');
+        var user_id = req.user.user_id;
+
+        var start_date = req.query.start_date,
+            end_date = req.query.end_date;
+
+        var search_term = req.query.search_term;
+
+        var insert = [search_term, start_date, end_date, 
+                        search_term, start_date, end_date];
+
+        var query_str = `
+            SELECT 'inex_income' as type, i.income_name as name, 
+                i.income_id as id, i.amount, i.date_received as date, 
+                c.category_name as category_name,
+                c.category_id as category_id
+                FROM 
+                    (SELECT i.income_id, i.income_name, i.amount, i.date_received, i.user_id
+                        FROM inex_category AS c
+                        INNER JOIN inex_income_category AS ic ON ic.category_id = c.category_id
+                        INNER JOIN inex_income AS i on i.income_id = ic.income_id
+                        WHERE c.category_name = ?)as i
                 inner join inex_user as u on i.user_id = u.user_id and u.user_id = ${user_id}
-                    left join inex_income_category as ic on ic.income_id = i.income_id
-                    left join inex_category as c on c.category_id = ic.category_id
-                    UNION ALL
-                    SELECT 'inex_expense' as type, e.expense_name as name, 
-                        e.expense_id as id, e.amount, 
-                        e.date_spent as date, 
-                        c.category_name as category_name,
-                        c.category_id as category_id
-                    FROM inex_expense as e
+                left join inex_income_category as ic on ic.income_id = i.income_id
+                left join inex_category as c on c.category_id = ic.category_id
+                WHERE (i.date_received >= ? AND i.date_received <= ?)
+            UNION ALL
+            SELECT 'inex_expense' as type, e.expense_name as name, 
+                e.expense_id as id, e.amount, 
+                e.date_spent as date, 
+                c.category_name as category_name,
+                c.category_id as category_id
+                FROM 
+                    (SELECT e.expense_id, e.expense_name, e.amount, e.date_spent, e.user_id
+                        FROM inex_category AS c
+                        INNER JOIN inex_expense_category AS ec ON ec.category_id = c.category_id
+                        INNER JOIN inex_expense AS e on e.expense_id = ec.expense_id
+                        WHERE c.category_name = ?) as e
                 inner join inex_user as u on e.user_id = u.user_id and u.user_id = ${user_id}
-                    left join inex_expense_category as ec on ec.expense_id = e.expense_id
-                    left join inex_category as c on c.category_id = ec.category_id
-                ) transactions;`;
-        mysql.pool.query(query_str, function(err, result){
+                left join inex_expense_category as ec on ec.expense_id = e.expense_id
+                left join inex_category as c on c.category_id = ec.category_id
+                WHERE (e.date_spent >= ? AND e.date_spent <= ?);
+            `;
+
+        mysql.pool.query(query_str, insert, function(err, result){
             if(err){
                 next(err);
                 return;
