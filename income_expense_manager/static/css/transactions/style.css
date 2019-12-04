@@ -1,0 +1,16 @@
+/* Enables input search X Cancel */
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: searchfield-cancel-button;
+}
+
+@media (min-width: 1400px) {
+    .container{
+        max-width: 1300px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .container{
+        max-width: 1400px;
+    }
+}

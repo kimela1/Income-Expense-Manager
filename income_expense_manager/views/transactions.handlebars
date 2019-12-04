@@ -2,22 +2,34 @@
     <h3 class="title is-3">Transactions</h3>
 </div>
 
-<div class="row mb-6">
-    <div class="col-sm-3">
-        <input class="form-control" type="date">
-    </div>
-    <div class="col-sm-3">
-        <input class="form-control" type="date">
-        <br>
-    </div>
-</div>
+<form>
+    <div class="form-group row">
+        <label for="start-date-input" class="col-sm-1 col-form-label">Start</label>
+        <div class="col-sm-2 col-auto">
+            <input class="form-control" type="date" id="start-date-input" required>
+        </div>
+        <label for="end-date-input" class="col-sm-1 col-form-label">End</label>
+        <div class="col-sm-2 col-auto">
+            <input class="form-control" type="date" id="end-date-input" required>
+        </div>
+        <div class="col-sm-2 col-auto">
+            <select class="custom-select">
+                <option value="1">Name</option>
+                <option value="3">Type</option>
+                <option value="3">Category</option>
+            </select>
+        </div>
+      
+        <div class="col-auto">
+            <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+        </div>
 
-<form class="form-inline" action="" method="">
-    <div class="input-group mb-4">
-        <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+        <button type="submit" class="btn" id="cat-search-submit">Search</button><br><br>
     </div>
-    <button type="submit" class="btn" id="cat-search-submit">Search</button><br><br>
+    
+    
 </form>
+
 
 <table class="table table-striped" id="transactions-table">
     <thead>
@@ -117,3 +129,4 @@
 <script src="js/addtransactionform.js"></script>
 <script src="js/transactiontable.js"></script>
 <script src="js/transactions.js"></script>
+<link rel="stylesheet" href="css/transactions/style.css">

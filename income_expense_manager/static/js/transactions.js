@@ -4,10 +4,32 @@ var ttable,
 var T = {
     transaction_table: null,
     add_transaction_form: null,
+    start_date: null,
+    end_date: null,
+    month_time_span: 6,
+    set_dates() {
+        var start_date = document.getElementById("start-date-input"),
+            end_date = document.getElementById("end-date-input");
+
+        var end = new Date(),
+            start = new Date();
+        
+        end.setMonth(end.getMonth() + 1);
+        end.setDate(-1);
+        end_date.valueAsDate = end;
+
+        start.setMonth(start.getMonth() - this.month_time_span);
+        start.setDate(0);
+        start_date.valueAsDate = start;
+
+        console.log(start_date, end_date);
+
+    },
 
     start: function() {
         this.transaction_table = ttable = new Transaction_Table("transactions-tbody");
         this.add_transaction_form = addtransform = new AddTransactionForm();
+        this.set_dates();
     },
     remove_transaction_category_relationship(transaction_id, type, category_id) {
         let xhr = new XMLHttpRequest();
