@@ -1,22 +1,28 @@
 <div class="content">
+    <br>
     <h3 class="title is-3">Categories</h3>
 </div>
 
 <!-- Search box -->
-<form id="search-categories" class="form-inline" action="" method="">
-    <label for="search" class="sr-only">Search by category name</label>
-    <input type="text" class="form-control" id="search_name" placeholder="Search by name">
-    <button type="submit" class="btn" id="search-submit" onclick="categories_search()">Search</button><br><br>
+<form id="search_categories" class="form-inline">
+    <div class="col-auto">
+        <br>
+        Search: 
+        <input type="text" class="form-control" id="search_name" placeholder="Filter by category name" onkeyup="categories_search()">
+    </div>
 </form>
 
 <!-- Add to categories-->
 <form id="add-categories" action="/add_categories" method="post" class="form-inline" >
-    <input type="text" name="category_name" placeholder="Enter new category name" class="form-control" required>
-    <button type="submit" class="btn" id="add-submit">➕ Category</button><br><br>
-</form>
+    <div class="col-auto">
+        Add a new category: 
+        <input type="text" name="category_name" placeholder="New category name" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-secondary" id="add-submit">➕ Category</button><br><br><br>
+</form><br>
 
 <!-- Table -->
-<table class="table table-striped" id="categories-table">
+<table class="table table-striped" id="categories_table">
     <thead>
         <tr>
             <th scope="col">Category Name</th>

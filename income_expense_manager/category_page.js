@@ -57,7 +57,6 @@ module.exports = function(app) {
 
             var context = {category_id: req.params.category_id,
                         category_name: result[0]["category_name"]};
-            //context.jsscripts = ["categories.js"];
             res.render('update_categories', context)
         });
     });
