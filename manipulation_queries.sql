@@ -61,6 +61,11 @@ left join inex_expense_category as ec ON ec.expense_id = e.expense_id
 left join inex_category as c on c.category_id = ec.category_id
 WHERE (e.date_spent >= ? AND e.date_spent <= ? e.expense_name = ?);
 
+-- Get categories from inex_category
+SELECT category_id, category_name
+FROM inex_category
+WHERE category_id = :id;
+
 -- Create new account
 INSERT INTO inex_user (first_name, last_name, username, password, email)
 VALUES (:add_first_name, :add_last_name, :add_username, :add_password, :add_email);
@@ -73,6 +78,10 @@ VALUES (:add_name, :add_amount, :add_date_received, :add_category_id, :add_user_
 INSERT INTO inex_expense (name, amount, date_spent, category_id, user_id)
 VALUES (:add_name, :add_amount, :add_date_spent, :add_category_id, :add_user_id);
 
+-- Add a new category into inex_category
+INSERT INTO inex_category (category_name, user_id)
+VALUES (:add_category_name, user_id);
+
 -- Edit a transaction on inex_income
 UPDATE inex_income
 SET name = :new_name, amount = :new_amount, date_received = :new_date_received, category_id = :new_category_id
@@ -83,25 +92,26 @@ UPDATE inex_expense
 SET name = :new_name, amount = :new_amount, date_spent = :new_date_spent, category_id = :new_category_id
 WHERE expense_id = :edit_expense_id;
 
+-- Edit a category on inex_category
+UPDATE inex_category
+SET category_name = :new_category_name 
+WHERE category_id = :id;
+
 -- Delete transaction on inex_income
 DELETE FROM inex_income where expense_id = :id;
 
 -- Delete transaction on inex_expense
 DELETE FROM inex_expense where expense_id = :id;
 
+-- Delete category on inex_category
+DELETE FROM inex_category
+WHERE category_id = :id;
+
 -- Delete Inex_Income_Category
 DELETE FROM inex_income_category where income_id = :id and category_id = :id
 
 -- Delete Inex_Expense_category
 DELETE FROM inex_expense_category where expense_id = :id and category_id = :id
-
--- Search Categories table
-SELECT name from inex_category
-WHERE inex_category.name = :in_name;
-
--- Add a new category into inex_category
-INSERT INTO inex_category (name)
-VALUES (:add_name);
 
 -- Select categories name, id, transaction name, type from of
 -- both income and expense
