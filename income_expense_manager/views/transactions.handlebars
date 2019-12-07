@@ -1,130 +1,144 @@
 <div class="content">
-    <h3 class="title is-3">Transactions</h3>
+    <h3 class="title is-3">
+        Transactions 
+        <div class="btn-group btn-group-toggle btn-group-sm" data-toggle="buttons">
+            <label class="btn btn-light active" id="table-radio-label">
+                <input type="radio" name="table" id="table-option" checked> 📝
+            </label>
+            <label class="btn btn-light" id="chart-radio-label">
+                <input type="radio" name="chart" id="chart-option">  📊
+            </label>
+        </div>
+    </h3>
 </div>
 
-<form id="search-form">
-    <div class="form-group row">
-        <label for="start-date-input" class="col-sm-1 col-form-label">Start</label>
-        <div class="col-sm-2 col-auto">
-            <input class="form-control" type="date" id="start-date-input" required>
-        </div>
-        <label for="end-date-input" class="col-sm-1 col-form-label">End</label>
-        <div class="col-sm-2 col-auto">
-            <input class="form-control" type="date" id="end-date-input" required>
-        </div>
-        <div class="col-sm-2 col-auto">
-            <select class="custom-select" id="search-select">
-                <option value="1">Name</option>
-                <option value="2">Category</option>
-            </select>
-        </div>
-        <div class="col-auto col-sm-3">
-            <input class="form-control" type="search" placeholder="Search" 
-                aria-label="Search" id="search-term-input">
-        </div>
+<div id="transactions-table-overall-container">
+    <form id="search-form">
+        <div class="form-group row">
+            <label for="start-date-input" class="col-sm-1 col-form-label">Start</label>
+            <div class="col-sm-2 col-auto">
+                <input class="form-control" type="date" id="start-date-input" required>
+            </div>
+            <label for="end-date-input" class="col-sm-1 col-form-label">End</label>
+            <div class="col-sm-2 col-auto">
+                <input class="form-control" type="date" id="end-date-input" required>
+            </div>
+            <div class="col-sm-2 col-auto">
+                <select class="custom-select" id="search-select">
+                    <option value="1">Name</option>
+                    <option value="2">Category</option>
+                </select>
+            </div>
+            <div class="col-auto col-sm-3">
+                <input class="form-control" type="search" placeholder="Search" 
+                    aria-label="Search" id="search-term-input">
+            </div>
 
-        <button type="submit" class="btn btn-primary" id="cat-search-submit">Search</button><br><br>
+            <button type="submit" class="btn btn-primary" id="cat-search-submit">Search</button><br><br>
+        </div>
+    </form>
+
+
+    <table class="table table-striped" id="transactions-table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Date</th>
+                <th scope="col">Type</th>
+                <th scope="col">Categories</th>
+                <th scope="col">Options</th>
+            </tr>
+        </thead>
+        <tbody id="transactions-tbody"></tbody>
+    </table>
+
+    <form>
+        <div class="input-group mb-3">
+
+        </div>
+    </form>
+
+    <!-- Modal to Add categories relationship with transactions -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body" id="categories-modal">
+            <div class="form-group">
+                <label for="categories-select" class="col-sm-2">Categories</label>
+                <select class="custom-select" id="trans-categories-relationship-select"></select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="add-category-relationship-btn">Add Category</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-category-modal-btn">Close</button>
+        </div>
+        </div>
     </div>
-    
-    
-</form>
-
-
-<table class="table table-striped" id="transactions-table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Amount</th>
-            <th scope="col">Date</th>
-            <th scope="col">Type</th>
-            <th scope="col">Categories</th>
-            <th scope="col">Options</th>
-        </tr>
-    </thead>
-    <tbody id="transactions-tbody"></tbody>
-</table>
-
-<form>
-    <div class="input-group mb-3">
-
     </div>
-</form>
 
-<!-- Modal to Add categories relationship with transactions -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" id="categories-modal">
-          <div class="form-group">
+
+
+    <button type="button" class="btn btn-primary" id="add-trans-btn">➕ Create</button>
+    <form action="" method="post" id="trans-form">
+        <h2>New Transaction:</h2>
+        <div class="form-group row">
+            <label for="name-input" class="col-sm-2 col-form-label">Name:</label>
+            <div class="col-sm-4">
+                <input id="name-input" type="text" name="input" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="amount-input" class="col-sm-2 col-form-label">Amount:</label>
+            <div class="col-sm-4">
+                <input id="amount-input" type="number" name="amount" value="" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="date-input" class="col-sm-2 col-form-label">Date:</label>
+            <div class="col-sm-4">
+                <input id="date-input" type="date" name="date" value=""><br><br required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Type</label>
+            <div class="col-sm-6">
+                <div class="custom-control custom-radio">
+                    <input class="form-check-input" id="income-radio" type="radio" name="type" value="income" checked>
+                    <label class="form-check-label" for="income-radio">
+                        Income
+                    </label>
+                </div>
+                <div class="custom-control custom-radio">
+                    <input class="form-check-input" id="expense-radio" type="radio" name="type" value="expense">
+                    <label class="form-check-label" for="expense-radio">
+                        Expense
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
             <label for="categories-select" class="col-sm-2">Categories</label>
-            <select class="custom-select" id="trans-categories-relationship-select"></select>
+            <select class="custom-select" id="categories-select" multiple></select>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="add-category-relationship-btn">Add Category</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-category-modal-btn">Close</button>
-      </div>
-    </div>
-  </div>
+        <input type="submit" value="Submit" id="trans-submit">
+        <input type="button" value="Cancel" id="trans-cancel">
+        <br><br>
+    </form>
+</div>
+<div id="transactions-chart-container" hidden>
+    <canvas id="transactions-chart"></canvas>
 </div>
 
-
-
-<button type="button" class="btn btn-primary" id="add-trans-btn">➕ Create</button>
-<form action="" method="post" id="trans-form">
-    <h2>New Transaction:</h2>
-    <div class="form-group row">
-        <label for="name-input" class="col-sm-2 col-form-label">Name:</label>
-        <div class="col-sm-4">
-            <input id="name-input" type="text" name="input" required>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="amount-input" class="col-sm-2 col-form-label">Amount:</label>
-        <div class="col-sm-4">
-            <input id="amount-input" type="number" name="amount" value="" required>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="date-input" class="col-sm-2 col-form-label">Date:</label>
-        <div class="col-sm-4">
-            <input id="date-input" type="date" name="date" value=""><br><br required>
-        </div>
-    </div>
-    <div class="form-group row">
-        <label class="col-sm-2 col-form-label">Type</label>
-        <div class="col-sm-6">
-            <div class="custom-control custom-radio">
-                <input class="form-check-input" id="income-radio" type="radio" name="type" value="income" checked>
-                <label class="form-check-label" for="income-radio">
-                    Income
-                </label>
-            </div>
-            <div class="custom-control custom-radio">
-                <input class="form-check-input" id="expense-radio" type="radio" name="type" value="expense">
-                <label class="form-check-label" for="expense-radio">
-                    Expense
-                </label>
-            </div>
-        </div>
-    </div>
-    
-    <div class="form-group">
-        <label for="categories-select" class="col-sm-2">Categories</label>
-        <select class="custom-select" id="categories-select" multiple></select>
-    </div>
-    <input type="submit" value="Submit" id="trans-submit">
-    <input type="button" value="Cancel" id="trans-cancel">
-    <br><br>
-</form>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
 <script src="js/addtransactionform.js"></script>
 <script src="js/transaction.js"></script>
 <script src="js/transactiontable.js"></script>

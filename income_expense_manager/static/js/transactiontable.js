@@ -178,4 +178,100 @@ class Transaction_Table {
             tbody.removeChild(tbody.firstChild);
         }
     }
+
+    // Returns data required for displaying for Chart.js
+    // [ {x: date_string, y: income/expense amount}]
+    // The dictionaries in the array are sorted
+    get_chart_data(type) {
+        var data_arrs;
+        if (type == "inex_income" || type == "income") {
+            data_arrs = this.transactions["inex_income"];
+        } else {
+            data_arrs = this.transactions["inex_expense"];
+        }
+        var data = {};
+
+        var date_string, amount, i, e;
+        // Get Income Data for Chart
+        for (var id in data_arrs) {
+            i = data_arrs[id];
+            amount = i["amount"]
+            date_string = i["date_string"]
+            if (date_string in data) {
+                data[date_string] += amount;
+            } else {
+                data[date_string] = amount;
+            }
+        }
+        data_arrs = [];
+        for (var date_string in data) {
+            data_arrs.push({x: date_string, y: data[date_string]});
+        }
+        data_arrs.sort(function(first, second) {
+            if (second.x > first.x)
+                return -1;
+            if (second.x < first.x)
+                return 1;
+            return 0;
+        });
+        return data_arrs;
+    }
+
+    display_chart() {
+        var expense_arr = this.get_chart_data("inex_expense"),
+            income_arr = this.get_chart_data("inex_income");
+
+        var ctx = document.getElementById('transactions-chart').getContext('2d');
+        
+        var timeFormat = 'YYYY-MM-DD';
+
+    var config = {
+        type:    'line',
+        data:    {
+            datasets: [
+                {
+                    label: "Expense",
+                    data: expense_arr,
+                    fill: false,
+                    borderColor: 'red'
+                },
+                {
+                    label: "Income",
+                    data:income_arr,
+                    fill: false,
+                    borderColor: 'green'
+                },
+            ]
+        },
+        options: {
+            responsive: true,
+            title:      {
+                display: true,
+                text:    "Chart.js Time Scale"
+            },
+            scales:     {
+                xAxes: [{
+                    type:       "time",
+                    time:       {
+                        format: timeFormat,
+                        tooltipFormat: 'll'
+                    },
+                    scaleLabel: {
+                        display:     true,
+                        labelString: 'Date'
+                    }
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display:     true,
+                        labelString: 'value'
+                    }
+                }]
+            }
+        }
+    };
+    new Chart(ctx, config);
+        
+    }
+        
 }

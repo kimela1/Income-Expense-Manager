@@ -86,29 +86,9 @@ class AddTransactionForm {
             var tbody = document.getElementById("transactions-tbody");
             
             var new_transaction = this.get_values();
-
-            console.log(new_transaction);
     
             // ttable.add_transaction(id, name, amount, date_string, income_status);
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST", "/ajax-add-transaction", true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.onload = function() {
-                if (xhr.status != 200) {
-                    alert( 'Error: ' + xhr.status);
-                    return;
-                } else {
-                    var r = xhr.response;
-                    var transaction_id = r.transaction;
-                    new_transaction["id"] = transaction_id;
-                    new_transaction["type"] = "inex_" + new_transaction["type"];
-
-                    console.log(new_transaction);
-                    ttable.add_transaction(new_transaction);
-                }
-            }
-
-            xhr.send(JSON.stringify(new_transaction));
+            T.add_transaction_by_form(new_transaction)
             
             this.reset_form();
         }.bind(this));

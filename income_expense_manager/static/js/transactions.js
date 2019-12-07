@@ -7,6 +7,8 @@ var T = {
     start: function() {
         this.transaction_table = ttable = new Transaction_Table("transactions-tbody");
         this.add_transaction_form = addtransform = new AddTransactionForm();
+        this.add_table_chart_handler();
+        T.load_transactions_to_table();
     },
     remove_transaction_category_relationship(transaction_id, type, category_id) {
         let xhr = new XMLHttpRequest();
@@ -108,6 +110,8 @@ var T = {
         xhr.send(JSON.stringify(o));
     },
 
+    // GET Requests for transactions
+    // Loads them to Transaction Table (this.transaction_table)
     load_transactions_to_table() {
         T.transaction_table.clear_table();
         var search_data = T.transaction_table.get_search_data();
@@ -143,6 +147,8 @@ var T = {
         }
         xhr.send();
     },
+    // Sends GET Requests for transactions filter
+    // Loads to Transaction table (this.transaction_table);
     search_transactions() {
         T.transaction_table.clear_table();
         var search_data = T.transaction_table.get_search_data();
@@ -182,10 +188,54 @@ var T = {
             }
         }
         xhr.send();
+    },
+    add_table_chart_handler() {
+        var table = document.getElementById("table-radio-label"),
+            chart = document.getElementById("chart-radio-label");
+        table.addEventListener("click", T.set_table_display);
+        chart.addEventListener("click", T.set_chart_display);
+    },
+    set_table_display() {
+        T.table_chart_handler("table")
+    },
+    set_chart_display() {
+        T.table_chart_handler("chart")
+    },
+    table_chart_handler(set_status) {
+        var chart_container = document.getElementById('transactions-chart-container'),
+            table_container = document.getElementById('transactions-table-overall-container');
+        if (set_status == "table") {
+            chart_container.setAttribute("hidden", true);
+            table_container.removeAttribute("hidden");
+        } else if (set_status == "chart") {
+            table_container.setAttribute("hidden", true);
+            chart_container.removeAttribute("hidden");
+            T.transaction_table.display_chart();
+        }
+    },
+    add_transaction_by_form(transaction_obj) {
+        console.log(transaction_obj);
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/ajax-add-transaction", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = function() {
+            if (xhr.status != 200) {
+                alert( 'Error: ' + xhr.status);
+                return;
+            } else {
+                var r = xhr.response;
+                var transaction_id = r.transaction;
+                transaction_obj["id"] = transaction_id;
+                transaction_obj["type"] = "inex_" + transaction_obj["type"];
+
+                T.transaction_table.add_transaction(transaction_obj);
+            }
+        }
+
+        xhr.send(JSON.stringify(transaction_obj));
     }
 };
 
 window.addEventListener("load", function(e) {
     T.start();
-    T.load_transactions_to_table();
 });
