@@ -16,6 +16,7 @@ class Transaction_Table {
         this.add_search_submit_handler();
     }
 
+    // Search handler for search bar/ form
     add_search_submit_handler() {
         var form = document.getElementById("search-form");
         form.addEventListener("submit", function(e) {
@@ -24,6 +25,8 @@ class Transaction_Table {
         })
     }
 
+    // Add Transactions to table or add category to transactions
+    //  if the transaction already exists
     add_transaction(transaction_object) {
         var tbody = document.getElementById("transactions-tbody");
 
@@ -66,6 +69,8 @@ class Transaction_Table {
         this.add_transaction_category_relationship = this.transactions[type][transaction_id];
     }
 
+    // Delete a transaction
+    // this.num_transactions NOT decreased
     delete_transaction(type, db_id, element_id) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/ajax_delete_transaction", true);
@@ -89,6 +94,7 @@ class Transaction_Table {
         parent_element.removeChild(tr);
     }
 
+    // Add Handler for deleting / adding categories to transactions
     add_category_relationship_handler() {
         var submit_btn = document.getElementById("add-category-relationship-btn");
         submit_btn.addEventListener("click", function(e) {
@@ -108,6 +114,9 @@ class Transaction_Table {
         }.bind(this))
     }
 
+    // Set the search date inputs to a time interval
+    //  the first 1 one month and the last day in the last month
+    //  Set by this.month_time.span
     set_date_range_inputs() {
         var start_date = document.getElementById("start-date-input"),
             end_date = document.getElementById("end-date-input");
@@ -161,6 +170,7 @@ class Transaction_Table {
         }
     }
 
+    // Delete all transactions & clear from display
     clear_table() {
         var income = this.transactions.inex_income,
             expense = this.transactions.inex_expense;
@@ -217,6 +227,8 @@ class Transaction_Table {
         return data_arrs;
     }
 
+    // Display the transactions to chart with Charts
+    // Chart Div is 'transactions-chart'
     display_chart() {
         var expense_arr = this.get_chart_data("inex_expense"),
             income_arr = this.get_chart_data("inex_income");
@@ -225,53 +237,52 @@ class Transaction_Table {
         
         var timeFormat = 'YYYY-MM-DD';
 
-    var config = {
-        type:    'line',
-        data:    {
-            datasets: [
-                {
-                    label: "Expense",
-                    data: expense_arr,
-                    fill: false,
-                    borderColor: 'red'
-                },
-                {
-                    label: "Income",
-                    data:income_arr,
-                    fill: false,
-                    borderColor: 'green'
-                },
-            ]
-        },
-        options: {
-            responsive: true,
-            title:      {
-                display: true,
-                text:    "Chart.js Time Scale"
-            },
-            scales:     {
-                xAxes: [{
-                    type:       "time",
-                    time:       {
-                        format: timeFormat,
-                        tooltipFormat: 'll'
+        var config = {
+            type:    'line',
+            data:    {
+                datasets: [
+                    {
+                        label: "Expense",
+                        data: expense_arr,
+                        fill: false,
+                        borderColor: 'red'
                     },
-                    scaleLabel: {
-                        display:     true,
-                        labelString: 'Date'
-                    }
-                }],
-                yAxes: [{
-                    scaleLabel: {
-                        display:     true,
-                        labelString: 'value'
-                    }
-                }]
+                    {
+                        label: "Income",
+                        data:income_arr,
+                        fill: false,
+                        borderColor: 'green'
+                    },
+                ]
+            },
+            options: {
+                responsive: true,
+                title:      {
+                    display: true,
+                    text:    "Chart.js Time Scale"
+                },
+                scales:     {
+                    xAxes: [{
+                        type:       "time",
+                        time:       {
+                            format: timeFormat,
+                            tooltipFormat: 'll'
+                        },
+                        scaleLabel: {
+                            display:     true,
+                            labelString: 'Date'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display:     true,
+                            labelString: 'value'
+                        }
+                    }]
+                }
             }
-        }
-    };
-    new Chart(ctx, config);
-        
+        };
+        new Chart(ctx, config);
     }
         
 }
