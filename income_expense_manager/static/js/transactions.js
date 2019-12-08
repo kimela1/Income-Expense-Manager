@@ -42,7 +42,9 @@ var T = {
             "amount": edit_obj["amount"],
         }
 
-        xhr.onload = function() {}
+        xhr.onload = function() {
+            T.transaction_table.show_total_amount();
+        }
         xhr.send(JSON.stringify(o));
     },
     // Gets the categories data as JSON and runs
