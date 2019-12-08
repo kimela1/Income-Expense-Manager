@@ -76,9 +76,7 @@ function check_user(req, res, next) {
 }
 
 // Main Page: Running index
-app.get('/', check_user, function(req, res, next) {
-    var context = {title: "Income and Expense Manager"};
-    
+app.get('/', check_user, function(req, res, next) {    
     res.redirect('/transactions');
 });
 
@@ -94,21 +92,13 @@ app.get('/reports', check_user, function(req, res, next) {
     res.render('reports', context);
 });
 
-/*app.get('/categories', check_user, function(req, res, next) {
-    var context = {title: "Categories"};
-    res.render('categories', context);
-});*/
-
 app.get('/signUp', function(req, res, next) {
     var context = {title: "sign up"};
     context["logged_out_status"] = true;
     res.render('signUp', context);
 });
 
-app.get('/transactions', check_user, function(req, res, next) {
-    var context = {title: "transactions"};
-    res.render('transactions', context);
-});
+
 
 app.get('/login', function(req, res, next) {
     var context = {title: "login"}

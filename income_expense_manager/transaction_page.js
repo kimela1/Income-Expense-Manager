@@ -1,4 +1,17 @@
 module.exports = function(app) {
+    function check_user(req, res, next) {
+        if (req.user) {
+            next();
+        } else {
+            res.redirect('/login');
+        }
+    }
+    
+    app.get('/transactions', check_user, function(req, res, next) {
+        var context = {title: "Transactions Page for Income and Expense Manager"};
+        res.render('transactions', context);
+    });
+
     app.get('/get_categories_json', function(req, res, next) {
         var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
