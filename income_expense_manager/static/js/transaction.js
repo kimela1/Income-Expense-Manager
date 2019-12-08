@@ -24,14 +24,9 @@ class Transaction {
 
         if (this.row_id) {
             if (!this.edit_status) {
-                var td = document.getElementById("categories-" + this.row_id);
-            var categories_str = "";
-            for(var i = 0; i< this.categories.length; i++) {
-                categories_str += " " + this.categories[i];
-            }
-            td.textContent = categories_str;
+                this.fill_category_nonedit_td();
             } else {
-                this.fill_categories_td();
+                this.fill_categories_edit_td();
             }  
         }
     }
@@ -81,11 +76,7 @@ class Transaction {
         // Categories td
         td = document.createElement("td");
         td.setAttribute("id", "categories-" + row_id);
-        var categories_str = "";
-        for(var i = 0; i< this.categories.length; i++) {
-            categories_str += " " + this.categories[i];
-        }
-        td.textContent = categories_str;
+        this.fill_category_nonedit_td(td);
         tr.appendChild(td);
 
         // Option buttons
@@ -144,10 +135,8 @@ class Transaction {
 
     remove_category(category_id) {
         T.remove_transaction_category_relationship(this.db_id, this.type, category_id);
-        console.log(this);
         for (var i = 0; i < this.category_ids.length; i++) {
             // Remove From catgories & category_ids Arrays
-            console.log(this.category_ids[i], category_id);
             if (this.category_ids[i] == category_id) {
                 this.category_ids.splice(i,1);
                 this.categories.splice(i,1);
@@ -155,8 +144,26 @@ class Transaction {
             }
         }
     }
-
-    fill_categories_td() {
+    // Fill categories TD in viewing mode with category elements
+    fill_category_nonedit_td(td) {
+        if (!td) {
+            td = document.getElementById("categories-" + this.row_id);
+        }
+        while(td.firstChild)
+            td.removeChild(td.firstChild)
+         
+        var category;
+        for(var i = 0; i< this.categories.length; i++) {
+            category = document.createElement("span");
+            category.innerText = this.categories[i];
+            category.classList.add("btn");
+            category.classList.add("btn-outline-secondary");
+            category.classList.add("btn-sm");
+            td.append(category);
+        }
+    }
+    // Fill categories TD in edit mode with category elements
+    fill_categories_edit_td() {
         var categories_td = document.getElementById("categories-" + this.row_id);
 
         // Remove Children
@@ -164,13 +171,16 @@ class Transaction {
             categories_td.removeChild(categories_td.firstChild);
         }
 
-        // Catagories Buttons 
+        
         var btn;
         if (this.categories !== undefined && this.categories.length > 0) {
+            // Catagories Buttons 
             for (var i=0; i<this.categories.length; i++) {
                 btn = document.createElement("button");
                 btn.setAttribute("type", "button");
                 btn.classList.add("btn");
+                btn.classList.add("btn-outline-secondary");
+                btn.classList.add("btn-sm");
                 btn.innerText = this.categories[i] + "❌";
 
                 btn.setAttribute("value", this.category_ids[i]);
@@ -180,7 +190,6 @@ class Transaction {
                 btn.addEventListener("click", function(e) {
                     var button = e.target;
                         var category_id = e.target.value;
-                        console.log(this);
 
                     this.remove_category(category_id);
 
@@ -263,7 +272,7 @@ class Transaction {
             input.required = true;
             date_td.append(input);
 
-            this.fill_categories_td();
+            this.fill_categories_edit_td();
 
             var btn = document.createElement("button");
             btn.innerText = "✔️";
