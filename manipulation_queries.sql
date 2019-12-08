@@ -15,15 +15,15 @@ select e.name, e.date_spent, e.amount, c.name as "category_name" from inex_expen
 -- Combine inex_income and inex_expense into one transactions table
 SELECT  * 
 FROM 
-        (
-            SELECT 'inex_income' as table_name, name, income_id as id, amount, date_received as date, user_id 
-            FROM inex_income
-                where date_received between '2019/11/01' and '2019/11/10'
-            UNION ALL
-            SELECT 'inex_expense' as table_name, name, expense_id as id, amount, date_spent as date, user_id
-            FROM inex_expense
-                where date_spent between '2019/11/01' and '2019/11/10'
-        ) transactions;
+    (
+        SELECT 'inex_income' as table_name, name, income_id as id, amount, date_received as date, user_id 
+        FROM inex_income
+            where date_received between '2019/11/01' and '2019/11/10'
+        UNION ALL
+        SELECT 'inex_expense' as table_name, name, expense_id as id, amount, date_spent as date, user_id
+        FROM inex_expense
+            where date_spent between '2019/11/01' and '2019/11/10'
+    ) transactions;
 
 -- Get inex_income and inex_expense in one transaction table along with the categories name
     SELECT 'inex_income' as table_name, i.name, i.income_id as id, i.amount, i.date_received as date, c.name as category_name 
@@ -178,3 +178,16 @@ SELECT 'inex_expense' as type, e.expense_name as name,
     left join inex_expense_category as ec on ec.expense_id = e.expense_id
     left join inex_category as c on c.category_id = ec.category_id
     WHERE (e.date_spent >= :date AND e.date_spent <= :date)
+
+-- Update User Account
+UPDATE inex_user
+    SET
+        first_name = :first_name,
+        last_name = :last_name,
+        email = :email
+    WHERE
+        user_id = :user_id;
+
+-- Get User Account
+SELECT first_name, last_name, email 
+        FROM inex_user WHERE user_id = :user_id
