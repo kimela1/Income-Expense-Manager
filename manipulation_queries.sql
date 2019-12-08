@@ -71,16 +71,28 @@ INSERT INTO inex_user (first_name, last_name, username, password, email)
 VALUES (:add_first_name, :add_last_name, :add_username, :add_password, :add_email);
 
 -- Add a new transaction into inex_income
+-- Adds inex_user relationship
 INSERT INTO inex_income (name, amount, date_received, category_id, user_id)
 VALUES (:add_name, :add_amount, :add_date_received, :add_category_id, :add_user_id);
 
 -- Add a new transaciton into inex_expense
+-- Adds inex_user relationship
 INSERT INTO inex_expense (name, amount, date_spent, category_id, user_id)
 VALUES (:add_name, :add_amount, :add_date_spent, :add_category_id, :add_user_id);
 
 -- Add a new category into inex_category
 INSERT INTO inex_category (category_name, user_id)
 VALUES (:add_category_name, user_id);
+
+-- Add inex_income_category
+INSERT INTO inex_income_category 
+    (income_id, category_id)
+    VALUES (:income_id, category_id);
+
+-- Add inex_expense_category
+INSERT INTO inex_expense_category 
+    (expense_id, category_id)
+    VALUES (:expense_id, category_id);
 
 -- Edit a transaction on inex_income
 UPDATE inex_income
@@ -147,7 +159,8 @@ select e.name, e.date_spent, e.amount, c.name as "category_name" from inex_expen
 -- Get Categories With User_id
 SELECT  SELECT  category_id, category_name FROM category WHERE category.user_id = :user_id;
 
--- Filter items by categories and use that query to building item-category
+-- Filter items by categories and use that query
+-- get Income & Expense along with all their category relationships
 SELECT 'inex_income' as type, i.income_name as name, 
     i.income_id as id, i.amount, i.date_received as date, 
     c.category_name as category_name,
@@ -191,3 +204,9 @@ UPDATE inex_user
 -- Get User Account
 SELECT first_name, last_name, email 
         FROM inex_user WHERE user_id = :user_id
+
+-- Select Category by ID
+SELECT category_id, category_name FROM inex_category WHERE category_id = :category_id
+
+-- Update Category
+UPDATE inex_category SET category_name = :category_name WHERE category_id = :category_id
