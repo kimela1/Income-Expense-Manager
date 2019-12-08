@@ -25,6 +25,21 @@ class Transaction_Table {
         })
     }
 
+    show_total_amount() {
+        var total = 0.0;
+        var incomes = this.transactions.inex_income,
+            expenses = this.transactions.inex_expense;
+        var id;
+        for (id in incomes) {
+            total += incomes[id].amount;
+        }
+        for (id in expenses) {
+            total -= expenses[id].amount;
+        }
+        var amount_element = document.getElementById("total-amount-element");
+        amount_element.innerText = total;
+    }
+
     // Add Transactions to table or add category to transactions
     //  if the transaction already exists
     add_transaction(transaction_object) {
@@ -62,6 +77,7 @@ class Transaction_Table {
             var tr = t.get_tr(this.transaction_counter);
     
             tbody.append(tr);
+            this.show_total_amount();
         }
     }
 
@@ -92,6 +108,8 @@ class Transaction_Table {
         var parent_element = tr.parentElement;
         // Remove the row element tr from the tbody element with removeChild
         parent_element.removeChild(tr);
+
+        this.show_total_amount()
     }
 
     // Add Handler for deleting / adding categories to transactions
@@ -256,6 +274,11 @@ class Transaction_Table {
                 ]
             },
             options: {
+                elements: {
+                    line: {
+                        tension: .4
+                    }
+                },
                 responsive: true,
                 title:      {
                     display: true,
