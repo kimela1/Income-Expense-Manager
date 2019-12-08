@@ -1,6 +1,7 @@
 var ttable,
     addtransform;
 
+// Object / Controller that interacts with the Express server
 var T = {
     transaction_table: null,
     add_transaction_form: null,
@@ -10,6 +11,8 @@ var T = {
         this.add_table_chart_handler();
         T.load_transactions_to_table();
     },
+    // Removes the expense_category / income_category relationship (also entity)
+    // by sending POST request to server
     remove_transaction_category_relationship(transaction_id, type, category_id) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/ajax_remove_transaction_category_relationship", true);
@@ -24,6 +27,7 @@ var T = {
         xhr.onload = function() {}
         xhr.send(JSON.stringify(o));
     },
+    // Updates Transaction Name, Date, Amount with server
     // edit_obj = includes name, amount, date
     update_transaction(transaction_id, type, edit_obj) {
         let xhr = new XMLHttpRequest();
@@ -41,6 +45,8 @@ var T = {
         xhr.onload = function() {}
         xhr.send(JSON.stringify(o));
     },
+    // Gets the categories data as JSON and runs
+    //  the callback function by passing xhr.response to it
     get_categories_data(callback) {
         let xhr = new XMLHttpRequest();
         xhr.open("GET", "/get_categories_json", true);
@@ -189,18 +195,24 @@ var T = {
         }
         xhr.send();
     },
+    // Adds the click handlers for the buttons
+    //  see the Table / Chart of Transactions
     add_table_chart_handler() {
         var table = document.getElementById("table-radio-label"),
             chart = document.getElementById("chart-radio-label");
         table.addEventListener("click", T.set_table_display);
         chart.addEventListener("click", T.set_chart_display);
     },
+    // Sets the display status to table
     set_table_display() {
         T.table_chart_handler("table")
     },
+    // Sets the display status to chart
     set_chart_display() {
         T.table_chart_handler("chart")
     },
+    // Sets the display status to either "chart" or "table"
+    // Does so by either hiding chart container or table container
     table_chart_handler(set_status) {
         var chart_container = document.getElementById('transactions-chart-container'),
             table_container = document.getElementById('transactions-table-overall-container');
@@ -213,6 +225,8 @@ var T = {
             T.transaction_table.display_chart();
         }
     },
+    // Adds the transaction that was in the add transaction form
+    //  by sending a POST request to the server
     add_transaction_by_form(transaction_obj) {
         console.log(transaction_obj);
         let xhr = new XMLHttpRequest();
