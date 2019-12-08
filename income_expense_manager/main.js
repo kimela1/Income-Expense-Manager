@@ -80,6 +80,7 @@ app.get('/', check_user, function(req, res, next) {
     res.redirect('/transactions');
 });
 
+// User Page to edit inex_user account
 app.use('/users_page', require('./users_page.js'));
 
 app.get('/dashboard', check_user, function(req, res, next) {
@@ -92,12 +93,14 @@ app.get('/reports', check_user, function(req, res, next) {
     res.render('reports', context);
 });
 
+// Sign up page to create inex_user
 app.get('/signUp', function(req, res, next) {
     var context = {title: "sign up"};
     context["logged_out_status"] = true;
     res.render('signUp', context);
 });
 
+// Create inex_user for user login
 app.post('/signUp', function(req, res, next) {
     var context = {title: "sign up"};
     var firstname = req.body.first_name,
@@ -125,8 +128,12 @@ app.get('/login', function(req, res, next) {
     res.render('login', context);
 });
 
+// Transactions Page
+// Insert, Update, Delete, Browse, Filter Inex_Income & Inex_Expense
+// Insert, Delete Inex_Income_Category & Inex_Expense_Category M:M Relationship
 require('./transaction_page.js')(app);
 
+// Add, Update, Delete, Browse, Filter Inex_Category
 require('./category_page.js')(app);
 
 app.get('/success', (req, res) => res.send("Welcome "+req.query.username+"!!"));
@@ -150,10 +157,10 @@ app.use(function(req, res){
     res.render('404');
 });
   
-// app.use(function(err, req, res, next) {
-//     res.status(500);
-//     res.render('500');
-// });
+app.use(function(err, req, res, next) {
+    res.status(500);
+    res.render('500');
+});
 
 app.listen(app.get('port'), function() {
     console.log('Express started on http://localhost: ' + app.get('port'));

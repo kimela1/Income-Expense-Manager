@@ -10,8 +10,8 @@ class AddTransactionForm {
         this.toggle_hide();
     }
 
+    // Set Amount Date Input to Today
     set_date() {
-        // Set Amount Date Input to Today
         var date_input = document.getElementById("date-input");
         date_input.valueAsDate = new Date();
     }
@@ -25,10 +25,12 @@ class AddTransactionForm {
         );
     }
 
+    // Fills the categories select menu
     set_categories() {        
         T.fill_categories_option("categories-select");
     }
 
+    // Hides / Shows the Add Transaction Form
     toggle_hide() {
         var show_transactions_btn = document.getElementById("add-trans-btn");
         var add_form = document.getElementById("trans-form");
@@ -45,6 +47,8 @@ class AddTransactionForm {
         }
     }
 
+    // Method to get the values from the html transaction form
+    // Returns the Transactions data as an object
     get_values() {
         var name_input = document.getElementById("name-input"),
             amount_input = document.getElementById("amount-input"),
@@ -77,6 +81,7 @@ class AddTransactionForm {
         return new_transaction;
     }
 
+    // When user submits the add form to add a transaction
     submit_handler() {
         var submit_button = document.getElementById("trans-submit");
 
@@ -94,6 +99,7 @@ class AddTransactionForm {
         }.bind(this));
     }
 
+    // Handler when user presses on cancel button
     cancel_handler() {
         var cancel_button = document.getElementById("trans-cancel");
         cancel_button.addEventListener("click", function(e) {

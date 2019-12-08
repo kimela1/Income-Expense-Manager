@@ -14,6 +14,8 @@ class Transaction {
         }
     }
     
+    // Adds categories to Transaction. 
+    // Also handles displaying categories on html page
     add_categories(category_ids, categories) {
         for(var i = 0; i<categories.length; i++) {
             if (categories[i] == null)
@@ -31,6 +33,7 @@ class Transaction {
         }
     }
 
+    // Returns the TR element for the Transaction
     get_tr(row_id) {
         this.row_id = row_id;
 
@@ -133,6 +136,7 @@ class Transaction {
         return tr;
     }
 
+    // Removes category from transaction
     remove_category(category_id) {
         T.remove_transaction_category_relationship(this.db_id, this.type, category_id);
         for (var i = 0; i < this.category_ids.length; i++) {
@@ -215,6 +219,7 @@ class Transaction {
         }.bind(this));
     }
 
+    // Remove any duplicate categories from the transaction table html page
     remove_modal_duplicate_categories() {
         var categories_obj = {};
         for(var i = 0; i < this.category_ids.length;i++) {
@@ -230,6 +235,8 @@ class Transaction {
         }
     }
 
+    // Convert the transaction row (in the html table)
+    //  into the edit form so that users can update the transaction
     change_edit_form() {
         var row_id = this.row_id;
 

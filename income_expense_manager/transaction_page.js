@@ -6,12 +6,15 @@ module.exports = function(app) {
             res.redirect('/login');
         }
     }
-    
+
+    // Transactions Page
+    // Browse Income, Expense, & their M:M relationship with category
     app.get('/transactions', check_user, function(req, res, next) {
         var context = {title: "Transactions Page for Income and Expense Manager"};
         res.render('transactions', context);
     });
 
+    // Gets Categories for ajax
     app.get('/get_categories_json', function(req, res, next) {
         var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
@@ -27,6 +30,7 @@ module.exports = function(app) {
         });
     });
 
+    // Gets Income, Expense, & their category relationship for ajax
     app.get('/get_transactions_json', function(req, res, next) {
         var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
@@ -83,6 +87,9 @@ module.exports = function(app) {
         });
     });
 
+    // Gets Expense, Income & their category relationships for ajax
+    //  by first matching those expense & income that have that category
+    //  and then retrieving all the other categories that they have.
     app.get('/transactions_by_category_name_json', function(req, res, next) {
         var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
@@ -138,6 +145,7 @@ module.exports = function(app) {
         });
     });
 
+    // Add Expense, Income via ajax
     app.post('/ajax-add-transaction', function(req, res, next) {
         var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
@@ -204,6 +212,7 @@ module.exports = function(app) {
           
     });
 
+    // Delete Income, Expense via ajax
     app.post('/ajax_delete_transaction', function(req, res, next) {
         var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
@@ -232,6 +241,7 @@ module.exports = function(app) {
         }
     });
 
+    // Delete income_category & expense_category entity/ relationship via ajax
     app.post('/ajax_remove_transaction_category_relationship', function(req, res, next) {
         var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
@@ -270,6 +280,7 @@ module.exports = function(app) {
         }
     });
 
+    // Create Income_Category & Expense_Category Relationship/ Entity via ajax
     app.post('/ajax_set_transaction_category_relationship', function(req, res, next) {
         var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
@@ -308,6 +319,7 @@ module.exports = function(app) {
         }
     });
 
+    // Update Income & Expense via ajax
     app.post('/ajax_update_transaction', function(req, res, next) {
         var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;

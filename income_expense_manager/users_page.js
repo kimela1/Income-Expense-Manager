@@ -10,6 +10,7 @@ module.exports = function() {
         }
     }
     
+    // Gets Users Page where user can edit their inex_user account
     router.get('/', check_user, function(req, res, next){
         var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
@@ -30,6 +31,7 @@ module.exports = function() {
         });
     });
 
+    // Updates inex_user
     router.post('/', check_user, function(req, res, next) {
         var mysql = req.app.get('mysql');
         var user_id = req.user.user_id;
