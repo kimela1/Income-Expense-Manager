@@ -98,7 +98,26 @@ app.get('/signUp', function(req, res, next) {
     res.render('signUp', context);
 });
 
-
+app.post('/signUp', function(req, res, next) {
+    var context = {title: "sign up"};
+    var firstname = req.body.first_name,
+        username = req.body.user_name,
+        email = req.body.email,
+        lastname = req.body.last_name,
+        birthdate = req.body.birthdate,
+        password = req.body.password;
+    
+    var query = `INSERT INTO inex_user(first_name, last_name, email, username, password, birth_date)
+        VALUES (?, ?, ?, ?, ?, ?);`,
+        values = [firstname, lastname, email, username, password, birthdate];
+    mysql.pool.query(query, values, function(err, result){
+        if(err){
+            next(err);
+            return;
+        }
+        res.redirect('/login');
+    });
+});
 
 app.get('/login', function(req, res, next) {
     var context = {title: "login"}
