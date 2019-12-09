@@ -1,12 +1,11 @@
-var ttable,
-    addtransform;
+var addtransform;
 
 // Object / Controller that interacts with the Express server
 var T = {
     transaction_table: null,
     add_transaction_form: null,
     start: function() {
-        this.transaction_table = ttable = new Transaction_Table("transactions-tbody");
+        this.transaction_table = new Transaction_Table("transactions-tbody");
         this.add_transaction_form = addtransform = new AddTransactionForm();
         this.add_table_chart_handler();
         T.load_transactions_to_table();
@@ -100,7 +99,7 @@ var T = {
     // Fill select element with categories for modal form to add
     // relationships to a transaction. Also, flags it with Transaction Table instance
     fill_categories_relationship(transaction_id, type, options_id, callback) {
-        ttable.set_add_category_relationship_status(transaction_id, type);
+        T.transaction_table.set_add_category_relationship_status(transaction_id, type);
         T.fill_categories_option(options_id, callback);
     },
     add_category_relationship(transaction_id, type, category_id) {
@@ -150,7 +149,7 @@ var T = {
                     amount: t["amount"],
                     id: t["id"]
                 }
-                ttable.add_transaction(o);
+                T.transaction_table.add_transaction(o);
             }
         }
         xhr.send();
@@ -192,7 +191,7 @@ var T = {
                     amount: t["amount"],
                     id: t["id"]
                 }
-                ttable.add_transaction(o);
+                T.transaction_table.add_transaction(o);
             }
         }
         xhr.send();
@@ -230,7 +229,6 @@ var T = {
     // Adds the transaction that was in the add transaction form
     //  by sending a POST request to the server
     add_transaction_by_form(transaction_obj) {
-        console.log(transaction_obj);
         let xhr = new XMLHttpRequest();
         xhr.open("POST", "/ajax-add-transaction", true);
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -239,8 +237,8 @@ var T = {
                 alert( 'Error: ' + xhr.status);
                 return;
             } else {
-                var r = xhr.response;
-                var transaction_id = r.transaction;
+                var r = JSON.parse(xhr.response);
+                var transaction_id = r.transaction_id;
                 transaction_obj["id"] = transaction_id;
                 transaction_obj["type"] = "inex_" + transaction_obj["type"];
 
