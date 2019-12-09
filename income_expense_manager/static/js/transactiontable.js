@@ -44,11 +44,19 @@ class Transaction_Table {
     //  if the transaction already exists
     add_transaction(transaction_object) {
         var tbody = document.getElementById("transactions-tbody");
-
         var id = transaction_object["id"],
             type = transaction_object["type"],
-            categories = [transaction_object["category_name"],],
-            category_ids = [transaction_object["category_id"],];
+            categories = [transaction_object["category_name"], ],
+            category_ids = [transaction_object["category_id"], ];
+        // If category_name & category_id already are arrays
+        if (typeof(transaction_object["category_name"]) != "string") {
+            categories = transaction_object["category_name"];
+        }
+        if (typeof(transaction_object["category_id"]) != "number"
+            && typeof(transaction_object["category_id"]) != "string") {
+            category_ids = transaction_object["category_id"];
+        }
+            
 
         // Transaction already exists, Add only Category
         if (this.transactions[type][id]) {
