@@ -47,8 +47,8 @@ module.exports = function(app) {
 
         if (search_term && search_option 
             && search_term.length > 0 && search_option == "name") {
-            income_search_query = "AND i.income_name = ?"
-            expense_search_query = "AND e.expense_name = ?"
+            income_search_query = "AND i.income_name LIKE CONCAT('%', ?, '%')"
+            expense_search_query = "AND e.expense_name LIKE CONCAT('%', ?, '%')"
 
             insert = [start_date, end_date, search_term, 
                 start_date, end_date, search_term];
@@ -200,7 +200,7 @@ module.exports = function(app) {
                         mysql.pool.query(cat_query, function(err, result){
                             res.setHeader('Content-Type', 'application/json');
                             res.send({
-                                "transaction": transaction_id});
+                                "transaction_id": transaction_id});
                         });
                     } else {
                         res.setHeader('Content-Type', 'application/json');
